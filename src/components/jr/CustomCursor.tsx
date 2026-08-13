@@ -34,7 +34,17 @@ export function CustomCursor() {
     const onOver = (e: MouseEvent) => {
       const el = (e.target as HTMLElement)?.closest<HTMLElement>("[data-magnetic], a, button");
       hovered = el || null;
-      scale = hovered ? 2.4 : 1;
+      scale = hovered ? 2.2 : 1;
+      
+      if (ringRef.current) {
+        if (hovered) {
+          ringRef.current.classList.add("border-[rgb(93_138_111)]/60", "bg-[rgb(93_138_111)]/5");
+          ringRef.current.classList.remove("border-[rgb(43_90_143)]/40");
+        } else {
+          ringRef.current.classList.remove("border-[rgb(93_138_111)]/60", "bg-[rgb(93_138_111)]/5");
+          ringRef.current.classList.add("border-[rgb(43_90_143)]/40");
+        }
+      }
     };
 
     const tick = () => {
@@ -64,12 +74,12 @@ export function CustomCursor() {
     <>
       <div
         ref={ringRef}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-9 w-9 rounded-full border border-foreground/40 transition-[width,height,border-color] duration-200"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-9 w-9 rounded-full border border-[rgb(43_90_143)]/40 transition-[width,height,border-color,background-color] duration-300"
         style={{ boxShadow: "none" }}
       />
       <div
         ref={dotRef}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-foreground"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-slate-900"
       />
     </>
   );

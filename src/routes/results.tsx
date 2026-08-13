@@ -120,12 +120,12 @@ function ResultsPage() {
   useReveal();
   const avgRating = 4.9;
   return (
-    <main className="relative min-h-screen pt-32">
-      {/* Hero band */}
-      <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
+    <main className="relative min-h-screen pt-28 bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]">
+      {/* Hero Band */}
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 md:py-24">
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 opacity-30"
+          className="absolute inset-0 -z-10 opacity-15"
           style={{
             backgroundImage: `url(${g3})`,
             backgroundSize: "cover",
@@ -133,22 +133,22 @@ function ResultsPage() {
             filter: "grayscale(1)",
           }}
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/70 via-background/85 to-background" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white/80 via-white/90 to-white" />
         <div className="mx-auto max-w-7xl px-6 md:px-12">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(93_138_111)]">
+          <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(93_138_111)]">
             / Wall of Gains
           </span>
-          <h1 className="mt-4 font-display text-6xl leading-[0.9] md:text-8xl">
+          <h1 className="mt-3 font-sans font-extrabold text-5xl tracking-tight text-slate-900 md:text-7xl leading-none">
             Receipts.<br />
-            <span className="text-shimmer">Not promises.</span>
+            <span className="text-[rgb(43_90_143)]">Not promises.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-sm leading-relaxed text-foreground/60 md:text-base">
+          <p className="mt-6 max-w-xl font-sans text-sm leading-relaxed text-slate-600 md:text-base">
             Twelve thousand athletes. Real bloodwork. Real bar loads. Real
             stopwatch splits. Every review is submitted with a batch number and
             verified against our order records.
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-8 border-t border-border pt-8">
+          <div className="mt-10 flex flex-wrap gap-8 border-t border-slate-200/80 pt-8">
             <Stat k={`${avgRating}/5`} v="Avg rating · 12k+ reviews" />
             <Stat k="94%" v="Would recommend" />
             <Stat k="99.4%" v="Lot purity avg" />
@@ -159,22 +159,22 @@ function ResultsPage() {
 
       <WallOfGains />
 
-      {/* Full reviews */}
-      <section className="border-t border-border py-24 md:py-32">
+      {/* Full Reviews Section */}
+      <section className="border-t border-slate-200/80 bg-slate-50 py-24 md:py-32">
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="mb-16 flex flex-col gap-4">
-            <span className="reveal font-mono text-[10px] uppercase tracking-wide text-[rgb(43_90_143)]">
+            <span className="reveal font-sans text-xs font-bold uppercase tracking-widest text-[rgb(43_90_143)]">
               / Verified Reviews
             </span>
             <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-              <h2 className="reveal max-w-3xl font-display text-5xl leading-[0.9] md:text-7xl">
-                In their <span className="text-shimmer">own words.</span>
+              <h2 className="reveal max-w-3xl font-sans font-extrabold text-4xl tracking-tight text-slate-900 md:text-6xl leading-tight">
+                In their <span className="text-[rgb(43_90_143)]">own words.</span>
               </h2>
               <div className="reveal flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="h-5 w-5 fill-[rgb(93_138_111)] text-[rgb(93_138_111)]" />
+                  <Star key={i} className="h-4 w-4 fill-[rgb(93_138_111)] text-[rgb(93_138_111)]" />
                 ))}
-                <span className="ml-2 font-mono text-xs uppercase tracking-wide text-foreground/60">
+                <span className="ml-2 font-sans text-xs font-semibold uppercase tracking-wider text-slate-500">
                   {avgRating} · 12,341 reviews
                 </span>
               </div>
@@ -186,19 +186,19 @@ function ResultsPage() {
               <article
                 key={r.name}
                 data-magnetic
-                className="reveal group relative overflow-hidden rounded-3xl border border-border bg-card p-6 transition-transform duration-500 hover:-translate-y-1 md:p-8"
+                className="reveal group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md md:p-8"
                 style={{ transitionDelay: `${i * 40}ms` }}
               >
-                <Quote className="absolute right-6 top-6 h-16 w-16 text-foreground/[0.04]" />
+                <Quote className="absolute right-6 top-6 h-16 w-16 text-slate-200/50" />
                 <div className="flex items-center gap-4">
                   <img
                     src={r.img}
-                    alt=""
-                    className="h-16 w-16 rounded-full border border-border object-cover"
+                    alt={r.name}
+                    className="h-14 w-14 rounded-full border border-slate-200 object-cover shadow-sm"
                   />
                   <div>
-                    <div className="font-display text-2xl">{r.name}</div>
-                    <div className="font-mono text-[10px] uppercase tracking-wide text-foreground/50">
+                    <div className="font-sans font-bold text-xl text-slate-900">{r.name}</div>
+                    <div className="font-sans text-[11px] font-medium uppercase tracking-wider text-slate-400">
                       {r.role}
                     </div>
                   </div>
@@ -208,21 +208,24 @@ function ResultsPage() {
                     ))}
                   </div>
                 </div>
+
                 <div className="mt-5 flex flex-wrap gap-2">
                   <Chip>{r.stack}</Chip>
                   <Chip>{r.weeks} wk protocol</Chip>
                   <Chip tone="green">Verified purchase</Chip>
                 </div>
-                <p className="mt-5 text-sm leading-relaxed text-foreground/70 md:text-base">
+
+                <p className="mt-5 font-sans text-sm leading-relaxed text-slate-600 md:text-base">
                   "{r.quote}"
                 </p>
-                <div className="mt-6 grid grid-cols-3 gap-3 border-t border-border pt-5">
+
+                <div className="mt-6 grid grid-cols-3 gap-3 border-t border-slate-100 pt-5">
                   {r.stats.map((s) => (
                     <div key={s.v}>
-                      <div className="font-display text-2xl">
-                        <span className="text-shimmer">{s.k}</span>
+                      <div className="font-sans font-black text-2xl text-[rgb(43_90_143)]">
+                        {s.k}
                       </div>
-                      <div className="mt-1 font-mono text-[9px] uppercase tracking-wide text-foreground/50">
+                      <div className="mt-1 font-sans text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         {s.v}
                       </div>
                     </div>
@@ -234,20 +237,22 @@ function ResultsPage() {
         </div>
       </section>
 
-      {/* Rating breakdown */}
-      <section className="border-t border-border py-24">
+      {/* Rating Breakdown Section */}
+      <section className="border-t border-slate-200/80 bg-white py-24">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-2 md:px-12">
           <div>
-            <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(93_138_111)]">
+            <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(93_138_111)]">
               / Distribution
             </span>
-            <h2 className="mt-3 font-display text-5xl leading-[0.9]">The bell curve.</h2>
-            <p className="mt-4 max-w-md text-sm text-foreground/60">
+            <h2 className="mt-2 font-sans font-extrabold text-4xl tracking-tight text-slate-900 md:text-5xl">
+              The bell curve.
+            </h2>
+            <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-slate-600">
               Aggregated across 12,341 verified reviews. Filtered by
               batch-linked purchases only.
             </p>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 justify-center">
             {[
               { s: 5, pct: 87 },
               { s: 4, pct: 9 },
@@ -256,21 +261,20 @@ function ResultsPage() {
               { s: 1, pct: 0.5 },
             ].map((r) => (
               <div key={r.s} className="flex items-center gap-4">
-                <div className="flex w-16 items-center gap-1 font-mono text-xs text-foreground/60">
-                  {r.s} <Star className="h-3 w-3 fill-foreground/60 text-foreground/60" />
+                <div className="flex w-16 items-center gap-1 font-sans text-xs font-semibold text-slate-600">
+                  {r.s} <Star className="h-3.5 w-3.5 fill-slate-400 text-slate-400" />
                 </div>
-                <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className="absolute inset-y-0 left-0 rounded-full"
                     style={{
                       width: `${r.pct}%`,
                       background:
                         "linear-gradient(90deg, rgb(43 90 143), rgb(93 138 111))",
-                      boxShadow: "0 0 12px rgb(93 138 111 / 0.5)",
                     }}
                   />
                 </div>
-                <div className="w-14 text-right font-mono text-xs text-foreground/50">
+                <div className="w-12 text-right font-sans text-xs font-semibold text-slate-500">
                   {r.pct}%
                 </div>
               </div>
@@ -279,13 +283,13 @@ function ResultsPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative overflow-hidden py-32">
+      {/* CTA Section */}
+      <section className="relative overflow-hidden bg-slate-50 py-32 border-t border-slate-200/80">
         <div className="mx-auto max-w-4xl px-6 text-center md:px-12">
-          <h2 className="font-display text-6xl leading-[0.9] md:text-8xl">
-            Your <span className="text-shimmer">turn.</span>
+          <h2 className="font-sans font-extrabold text-5xl tracking-tight text-slate-900 md:text-7xl leading-none">
+            Your <span className="text-[rgb(93_138_111)]">turn.</span>
           </h2>
-          <p className="mx-auto mt-6 max-w-lg text-sm text-foreground/60 md:text-base">
+          <p className="mx-auto mt-6 max-w-lg font-sans text-sm text-slate-600 md:text-base">
             The wall keeps growing. Add your name to the receipts.
           </p>
           <div className="mt-10 flex justify-center gap-4">
@@ -301,10 +305,10 @@ function ResultsPage() {
 function Stat({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <div className="font-display text-4xl">
-        <span className="text-shimmer">{k}</span>
+      <div className="font-sans font-black text-3xl text-slate-900 md:text-4xl">
+        <span className="text-[rgb(43_90_143)]">{k}</span>
       </div>
-      <div className="mt-1 font-mono text-[10px] uppercase tracking-wide text-foreground/50">
+      <div className="mt-1 font-sans text-[10px] font-bold uppercase tracking-wider text-slate-400">
         {v}
       </div>
     </div>
@@ -314,10 +318,10 @@ function Stat({ k, v }: { k: string; v: string }) {
 function Chip({ children, tone = "default" }: { children: React.ReactNode; tone?: "default" | "green" }) {
   const cls =
     tone === "green"
-      ? "border-[rgb(93_138_111)]/40 bg-[rgb(93_138_111)]/10 text-[rgb(93_138_111)]"
-      : "border-border bg-card text-foreground/70";
+      ? "border-[rgb(93_138_111)]/30 bg-[rgb(93_138_111)]/10 text-[rgb(93_138_111)]"
+      : "border-slate-200 bg-slate-100 text-slate-700";
   return (
-    <span className={`inline-flex items-center rounded-full border px-3 py-1 font-mono text-[9px] uppercase tracking-wide ${cls}`}>
+    <span className={`inline-flex items-center rounded-full border px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-wider ${cls}`}>
       {children}
     </span>
   );

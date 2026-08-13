@@ -25,12 +25,12 @@ function ContactPage() {
   const [topic, setTopic] = useState("Protocol help");
 
   return (
-    <main className="relative min-h-screen pt-32">
+    <main className="relative min-h-screen pt-28 bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border py-16 md:py-24">
+      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white py-16 md:py-24">
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 opacity-30"
+          className="absolute inset-0 -z-10 opacity-15"
           style={{
             backgroundImage: `url(${vial})`,
             backgroundSize: "cover",
@@ -38,18 +38,18 @@ function ContactPage() {
             filter: "grayscale(1) contrast(1.05)",
           }}
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/60 via-background/85 to-background" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white/80 via-white/90 to-white" />
         <div className="mx-auto grid max-w-7xl gap-12 px-6 md:grid-cols-2 md:items-end md:px-12">
           <div>
-            <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(43_90_143)]">
+            <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(43_90_143)]">
               / Talk to us
             </span>
-            <h1 className="mt-4 font-display text-6xl leading-[0.9] md:text-8xl">
+            <h1 className="mt-3 font-sans font-extrabold text-5xl tracking-tight text-slate-900 md:text-7xl leading-none">
               Real humans.<br />
-              <span className="text-shimmer">Real answers.</span>
+              <span className="text-[rgb(93_138_111)]">Real answers.</span>
             </h1>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-foreground/60 md:text-base">
+          <p className="max-w-md font-sans text-sm leading-relaxed text-slate-600 md:text-base">
             Whether you need protocol advice, a batch verification, or you're a
             gym owner asking about wholesale — a specialist will respond within
             one business hour, seven days a week.
@@ -68,13 +68,13 @@ function ContactPage() {
             <div
               key={c.t}
               data-magnetic
-              className="reveal glass gradient-border group relative rounded-2xl p-8 transition-transform duration-500 hover:-translate-y-2"
+              className="reveal group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               <div
-                className="flex h-12 w-12 items-center justify-center rounded-xl border"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl border"
                 style={{
-                  borderColor: c.c === "blue" ? "rgb(43 90 143 / 0.4)" : "rgb(93 138 111 / 0.4)",
-                  background: c.c === "blue" ? "rgb(43 90 143 / 0.08)" : "rgb(93 138 111 / 0.08)",
+                  borderColor: c.c === "blue" ? "rgba(43, 90, 143, 0.25)" : "rgba(93, 138, 111, 0.25)",
+                  background: c.c === "blue" ? "rgba(43, 90, 143, 0.06)" : "rgba(93, 138, 111, 0.06)",
                 }}
               >
                 <c.i
@@ -82,12 +82,12 @@ function ContactPage() {
                   style={{ color: c.c === "blue" ? "rgb(43 90 143)" : "rgb(93 138 111)" }}
                 />
               </div>
-              <div className="mt-6 font-mono text-[10px] uppercase tracking-wide text-foreground/50">
+              <div className="mt-6 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 {c.t}
               </div>
-              <div className="mt-2 font-display text-2xl">{c.v}</div>
-              <div className="mt-2 flex items-center gap-2 text-xs text-foreground/50">
-                <Clock className="h-3 w-3" /> {c.s}
+              <div className="mt-1 font-sans font-extrabold text-2xl text-slate-900">{c.v}</div>
+              <div className="mt-3 flex items-center gap-2 font-sans text-xs font-semibold text-slate-500">
+                <Clock className="h-3.5 w-3.5 text-slate-400" /> {c.s}
               </div>
             </div>
           ))}
@@ -95,27 +95,26 @@ function ContactPage() {
       </section>
 
       {/* Form + sidebar */}
-      <section className="py-16">
+      <section className="pb-24 pt-4">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 md:px-12 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-3xl border border-border bg-card p-8 md:p-12">
+          <div className="rounded-3xl border border-slate-200/80 bg-white p-8 shadow-sm md:p-12">
             {sent ? (
               <div className="flex flex-col items-center py-12 text-center">
                 <div
-                  className="flex h-20 w-20 items-center justify-center rounded-full border border-[rgb(93_138_111)]/40 bg-[rgb(93_138_111)]/10"
-                  style={{ boxShadow: "0 0 40px rgb(93 138 111 / 0.4)" }}
+                  className="flex h-20 w-20 items-center justify-center rounded-full border border-[rgb(93_138_111)]/30 bg-[rgb(93_138_111)]/10"
                 >
                   <Check className="h-8 w-8 text-[rgb(93_138_111)]" />
                 </div>
-                <h2 className="mt-8 font-display text-5xl">
-                  Message <span className="text-shimmer">received.</span>
+                <h2 className="mt-8 font-sans font-extrabold text-4xl text-slate-900 md:text-5xl">
+                  Message <span className="text-[rgb(93_138_111)]">received.</span>
                 </h2>
-                <p className="mt-4 max-w-md text-sm text-foreground/60">
+                <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-slate-600">
                   A specialist will reach you at the email you provided within
                   one business hour.
                 </p>
                 <button
                   onClick={() => setSent(false)}
-                  className="mt-8 font-mono text-[10px] uppercase tracking-wide text-foreground/60 hover:text-foreground"
+                  className="mt-8 font-sans text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   ← Send another
                 </button>
@@ -129,16 +128,16 @@ function ContactPage() {
                 className="flex flex-col gap-6"
               >
                 <div>
-                  <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(93_138_111)]">
+                  <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(93_138_111)]">
                     / Send a message
                   </span>
-                  <h2 className="mt-3 font-display text-4xl md:text-5xl">
+                  <h2 className="mt-2 font-sans font-extrabold text-3xl tracking-tight text-slate-900 md:text-4xl">
                     Tell us what you need.
                   </h2>
                 </div>
 
                 <div>
-                  <div className="mb-3 font-mono text-[10px] uppercase tracking-wide text-foreground/50">
+                  <div className="mb-3 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-400">
                     What's this about?
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -147,10 +146,10 @@ function ContactPage() {
                         key={t}
                         type="button"
                         onClick={() => setTopic(t)}
-                        className={`rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-wide transition-colors ${
+                        className={`rounded-full border px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider transition-all ${
                           topic === t
-                            ? "border-[rgb(43_90_143)] bg-[rgb(43_90_143)]/15 text-foreground"
-                            : "border-border bg-card text-foreground/60 hover:border-foreground/20 hover:text-foreground"
+                            ? "border-[rgb(43_90_143)] bg-[rgb(43_90_143)] text-white shadow-sm"
+                            : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:text-slate-900"
                         }`}
                       >
                         {t}
@@ -165,18 +164,18 @@ function ContactPage() {
                 </div>
                 <Field label="Subject" name="subject" required />
                 <label className="flex flex-col gap-1.5">
-                  <span className="font-mono text-[9px] uppercase tracking-wide text-foreground/50">
+                  <span className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-500">
                     Message
                   </span>
                   <textarea
                     required
                     rows={6}
-                    className="rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-foreground/25 focus:border-[rgb(43_90_143)] focus:outline-none"
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:border-[rgb(43_90_143)] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[rgb(43_90_143)] transition-all"
                     placeholder="Tell us your goals, current protocol, and where you're stuck…"
                   />
                 </label>
-                <label className="flex items-center gap-3 text-xs text-foreground/60">
-                  <input type="checkbox" className="h-4 w-4 accent-[rgb(93_138_111)]" />
+                <label className="flex items-center gap-3 font-sans text-xs font-medium text-slate-600">
+                  <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-[rgb(93_138_111)] focus:ring-[rgb(93_138_111)] accent-[rgb(93_138_111)]" />
                   Subscribe to the Jacked Rabbits Journal — protocols, lab data, athlete features.
                 </label>
                 <div>
@@ -189,35 +188,37 @@ function ContactPage() {
           </div>
 
           <aside className="flex flex-col gap-6">
-            <div className="rounded-3xl border border-border bg-card p-8">
-              <div className="font-mono text-[10px] uppercase tracking-wide text-foreground/50">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-8 shadow-sm">
+              <div className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(43_90_143)]">
                 / Fastest path
               </div>
-              <ul className="mt-6 space-y-5 text-sm">
+              <ul className="mt-6 space-y-6 text-sm">
                 {[
                   { i: MessageSquare, t: "Protocol help", s: "Chat with a certified prep coach." },
                   { i: Beaker, t: "Batch COAs", s: "Reply with your order # for the lot report." },
                   { i: HelpCircle, t: "General FAQ", s: "Shipping, storage, reconstitution guides." },
                 ].map((r) => (
-                  <li key={r.t} className="flex items-start gap-3">
-                    <r.i className="mt-0.5 h-4 w-4 text-[rgb(93_138_111)]" />
+                  <li key={r.t} className="flex items-start gap-3.5">
+                    <div className="rounded-lg bg-[rgb(93_138_111)]/10 p-2 text-[rgb(93_138_111)]">
+                      <r.i className="h-4 w-4" />
+                    </div>
                     <div>
-                      <div className="font-display text-lg text-foreground">{r.t}</div>
-                      <div className="text-foreground/50">{r.s}</div>
+                      <div className="font-sans font-bold text-base text-slate-900">{r.t}</div>
+                      <div className="font-sans text-xs text-slate-500 mt-0.5">{r.s}</div>
                     </div>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="rounded-3xl border border-border bg-gradient-to-br from-[rgb(43_90_143)]/10 to-[rgb(93_138_111)]/10 p-8">
-              <div className="font-mono text-[10px] uppercase tracking-wide text-foreground/60">
+            <div className="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-[rgb(43_90_143)]/5 to-[rgb(93_138_111)]/10 p-8 shadow-sm">
+              <div className="font-sans text-xs font-bold uppercase tracking-widest text-slate-700">
                 / Emergency
               </div>
-              <p className="mt-4 text-sm text-foreground/70">
+              <p className="mt-3 font-sans text-xs leading-relaxed text-slate-600">
                 Peptides are for research use only. If you're experiencing an
                 adverse reaction, contact your physician or Poison Control at
-                <span className="font-mono text-foreground"> 1-800-222-1222</span>.
+                <span className="font-bold text-slate-900"> 1-800-222-1222</span>.
               </p>
             </div>
           </aside>
@@ -225,15 +226,15 @@ function ContactPage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-border py-24">
+      <section className="border-t border-slate-200/80 bg-white py-24">
         <div className="mx-auto max-w-4xl px-6 md:px-12">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(43_90_143)]">
+          <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(43_90_143)]">
             / FAQ
           </span>
-          <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">
-            The <span className="text-shimmer">quick hits.</span>
+          <h2 className="mt-2 font-sans font-extrabold text-4xl tracking-tight text-slate-900 md:text-5xl">
+            The <span className="text-[rgb(93_138_111)]">quick hits.</span>
           </h2>
-          <div className="mt-10 divide-y divide-border border-y border-border">
+          <div className="mt-10 divide-y divide-slate-200/80 border-y border-slate-200/80">
             {[
               { q: "How fast do you ship?", a: "24-hour dispatch on every order, Monday through Saturday. Cold-chain express arrives in 2–3 business days anywhere in the continental US." },
               { q: "How are peptides shipped cold?", a: "Every order goes out in an insulated pouch with reusable gel packs, temperature-logged for the full transit window." },
@@ -242,11 +243,11 @@ function ContactPage() {
               { q: "Is this legal?", a: "All products are sold strictly for research purposes and are not for human consumption. You must be 21+ to purchase." },
             ].map((f) => (
               <details key={f.q} className="group py-6">
-                <summary className="flex cursor-pointer items-center justify-between font-display text-2xl text-foreground/90 hover:text-foreground">
+                <summary className="flex cursor-pointer items-center justify-between font-sans font-bold text-xl text-slate-900 hover:text-[rgb(43_90_143)] transition-colors">
                   {f.q}
-                  <span className="ml-4 font-mono text-2xl text-foreground/40 transition-transform group-open:rotate-45">+</span>
+                  <span className="ml-4 font-sans text-2xl text-slate-400 transition-transform group-open:rotate-45">+</span>
                 </summary>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/60">{f.a}</p>
+                <p className="mt-3 max-w-2xl font-sans text-sm leading-relaxed text-slate-600">{f.a}</p>
               </details>
             ))}
           </div>
@@ -262,10 +263,10 @@ function Field({
 }: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="font-mono text-[9px] uppercase tracking-wide text-foreground/50">{label}</span>
+      <span className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-500">{label}</span>
       <input
         {...rest}
-        className="rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-foreground/25 focus:border-[rgb(43_90_143)] focus:outline-none"
+        className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:border-[rgb(43_90_143)] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[rgb(43_90_143)] transition-all"
       />
     </label>
   );

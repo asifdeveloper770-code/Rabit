@@ -4,10 +4,10 @@ import logo from "@/assets/jacked-rabbits-logo.png";
 
 export function Hero() {
   return (
-    <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden pt-24">
+    <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden pt-24 bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]">
       <div className="pointer-events-none absolute inset-0">
         <ParticleField />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgb(250_250_248/0.5)_60%,rgb(250_250_248)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(248,250,252,0.6)_60%,rgb(248,250,252)_100%)]" />
       </div>
 
       {/* Content */}
@@ -19,26 +19,29 @@ export function Hero() {
         }}
       >
         <span
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 font-mono text-[10px] uppercase tracking-wide text-foreground/70 backdrop-blur"
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/90 px-4 py-1.5 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm backdrop-blur"
           style={{ animation: "jr-fade-up 1s 0.1s both" }}
         >
           <span
-            className="h-1.5 w-1.5 rounded-full bg-[rgb(93_138_111)]"
-            style={{ boxShadow: "0 0 8px rgb(93 138 111)" }}
+            className="h-2 w-2 rounded-full bg-[rgb(93_138_111)]"
+            style={{ boxShadow: "0 0 10px rgb(93 138 111)" }}
           />
           Batch #247 · HPLC Verified
         </span>
 
         <div className="jr-rabbit-stage relative w-full">
           {/* Colored aura */}
-          <div aria-hidden className="jr-rabbit-aura absolute inset-0 -z-10 blur-3xl" />
+          <div
+            aria-hidden
+            className="jr-rabbit-aura absolute inset-0 -z-10 blur-3xl opacity-60"
+          />
 
           <img
             src={logo}
             width={900}
             height={1200}
             alt="Jacked Rabbits — Build, Recover, Adapt"
-            className="jr-rabbit mx-auto block h-auto w-[clamp(240px,58vw,500px)] max-w-full select-none"
+            className="jr-rabbit mx-auto block h-auto w-[clamp(240px,58vw,500px)] max-w-full select-none drop-shadow-[0_20px_30px_rgba(15,23,42,0.08)]"
             draggable={false}
             decoding="async"
             fetchPriority="high"
@@ -58,7 +61,7 @@ export function Hero() {
         </div>
 
         <div
-          className="mt-16 grid w-full grid-cols-3 gap-4 border-t border-border pt-8 md:mt-20 md:gap-10"
+          className="mt-16 grid w-full grid-cols-3 gap-4 border-t border-slate-200/80 pt-8 md:mt-20 md:gap-10"
           style={{ animation: "jr-fade-up 1.4s 1s both" }}
         >
           {[
@@ -67,10 +70,10 @@ export function Hero() {
             { k: "24h", v: "Ship Time" },
           ].map((s) => (
             <div key={s.v} className="text-center">
-              <div className="font-display text-3xl md:text-5xl">
-                <span className="text-shimmer">{s.k}</span>
+              <div className="font-sans font-extrabold text-3xl text-slate-900 md:text-5xl">
+                <span className="text-[rgb(43_90_143)]">{s.k}</span>
               </div>
-              <div className="mt-1 font-mono text-[9px] uppercase tracking-wide text-foreground/50 md:text-[10px]">
+              <div className="mt-1 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 {s.v}
               </div>
             </div>
@@ -79,10 +82,10 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
+      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 font-sans text-[11px] font-bold uppercase tracking-widest text-slate-400">
         <div className="flex flex-col items-center gap-2">
           <span>Scroll</span>
-          <span className="h-8 w-px bg-gradient-to-b from-foreground/30 to-transparent" />
+          <span className="h-8 w-px bg-gradient-to-b from-slate-300 to-transparent" />
         </div>
       </div>
     </section>

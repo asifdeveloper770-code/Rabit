@@ -47,14 +47,14 @@ export function ScienceSection() {
     <section
       id="science"
       ref={wrapRef}
-      className="relative overflow-hidden py-24 md:py-32"
+      className="relative overflow-hidden py-24 md:py-32 bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(1000px 700px at 20% 40%, rgb(43 90 143 / 0.08), transparent 60%), radial-gradient(900px 600px at 85% 70%, rgb(93 138 111 / 0.07), transparent 60%)",
+            "radial-gradient(1000px 700px at 20% 40%, rgb(43 90 143 / 0.05), transparent 60%), radial-gradient(900px 600px at 85% 70%, rgb(93 138 111 / 0.05), transparent 60%)",
         }}
       />
 
@@ -63,10 +63,10 @@ export function ScienceSection() {
         <div className="relative flex min-h-[60vh] items-center justify-center md:sticky md:top-24 md:min-h-[80vh]">
           <div
             aria-hidden
-            className="absolute inset-0 -z-10 blur-3xl"
+            className="absolute inset-0 -z-10 blur-3xl opacity-60"
             style={{
               background:
-                "radial-gradient(circle at 50% 50%, rgb(43 90 143 / 0.22), transparent 60%), radial-gradient(circle at 40% 60%, rgb(93 138 111 / 0.16), transparent 65%)",
+                "radial-gradient(circle at 50% 50%, rgb(43 90 143 / 0.15), transparent 60%), radial-gradient(circle at 40% 60%, rgb(93 138 111 / 0.12), transparent 65%)",
             }}
           />
           <img
@@ -75,7 +75,7 @@ export function ScienceSection() {
             loading="lazy"
             width={1024}
             height={1280}
-            className="max-h-[70vh] w-auto object-contain drop-shadow-[0_24px_40px_rgb(28_32_36/0.18)]"
+            className="max-h-[70vh] w-auto object-contain drop-shadow-[0_20px_30px_rgba(15,23,42,0.12)]"
             style={{
               transform: `rotate(${rotate}deg) scale(${0.95 + t * 0.08})`,
               transition: "transform 0.4s cubic-bezier(.2,.7,.2,1)",
@@ -85,15 +85,15 @@ export function ScienceSection() {
 
         {/* Right: content */}
         <div className="reveal flex flex-col gap-6">
-          <span className="font-mono text-[10px] uppercase tracking-wide text-[rgb(93_138_111)]">
+          <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(93_138_111)]">
             / The Mechanism
           </span>
-          <h2 className="font-display text-5xl leading-[0.9] md:text-7xl">
+          <h2 className="font-sans font-extrabold text-4xl leading-tight text-slate-900 md:text-6xl">
             Science
             <br />
-            <span className="text-shimmer">Engineered.</span>
+            <span className="text-[rgb(43_90_143)]">Engineered.</span>
           </h2>
-          <p className="max-w-md text-sm leading-relaxed text-foreground/60 md:text-base">
+          <p className="max-w-md font-sans text-sm leading-relaxed text-slate-600 md:text-base">
             Every compound is third-party lab-verified. Every batch is HPLC-tested.
             We don't sell hope — we sell measurable adaptation.
           </p>
@@ -103,14 +103,14 @@ export function ScienceSection() {
               <div
                 key={c.tag}
                 data-magnetic
-                className="glass gradient-border reveal group relative rounded-2xl p-6 transition-transform duration-500 hover:-translate-y-1"
+                className="reveal group relative rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
               >
-                <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-wide text-foreground/40">
+                <div className="flex items-baseline justify-between font-sans text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   <span>{c.tag}</span>
                   <span className="text-[rgb(93_138_111)]">Verified</span>
                 </div>
-                <h3 className="mt-3 font-display text-2xl">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-foreground/60">{c.body}</p>
+                <h3 className="mt-3 font-sans font-extrabold text-2xl text-slate-900">{c.title}</h3>
+                <p className="mt-2 font-sans text-sm leading-relaxed text-slate-600">{c.body}</p>
               </div>
             ))}
           </div>

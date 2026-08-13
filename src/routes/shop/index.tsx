@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { PRODUCTS, CATEGORIES, type Category } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useReveal } from "@/lib/useReveal";
-import { Search, Check } from "lucide-react";
+import { Search, Check, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/shop/")({
   head: () => ({
@@ -47,7 +47,6 @@ function purityOf(p: (typeof PRODUCTS)[number]) {
 }
 
 function popularityOf(p: (typeof PRODUCTS)[number]) {
-  // Catalogue order reflects demand; earlier entries are the bestsellers.
   return PRODUCTS.length - PRODUCTS.findIndex((x) => x.id === p.id);
 }
 
@@ -81,30 +80,30 @@ function ShopPage() {
   }, [cat, q, sort]);
 
   return (
-    <main className="relative min-h-screen pt-28">
-      {/* Compact page header */}
-      <section className="border-b border-border">
+    <main className="relative min-h-screen bg-slate-50 pt-28 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]">
+      {/* Page Header */}
+      <section className="border-b border-slate-200/80 bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-6 px-6 py-12 md:px-12">
           <div>
-            <span className="font-mono text-[10px] uppercase tracking-wide text-foreground/40">
+            <span className="font-sans text-xs font-bold uppercase tracking-widest text-[rgb(43_90_143)]">
               Catalogue
             </span>
-            <h1 className="mt-3 font-display text-5xl leading-none md:text-6xl">
+            <h1 className="mt-2 font-sans text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl">
               Research peptides
             </h1>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-foreground/55">
+          <p className="max-w-sm font-sans text-sm leading-relaxed text-slate-600">
             {PRODUCTS.length} compounds, each shipped with a lot-specific
             certificate of analysis.
           </p>
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[200px_1fr] md:px-12">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[220px_1fr] md:px-12">
         {/* Sidebar */}
         <aside className="md:sticky md:top-28 md:self-start">
-          <div className="relative mb-8">
-            <Search className="pointer-events-none absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/35" />
+          <div className="group relative mb-8">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-[rgb(43_90_143)]" />
             <input
               value={q}
               onChange={(e) => {
@@ -113,15 +112,15 @@ function ShopPage() {
                   search: (prev: any) => ({ ...prev, q: e.target.value || undefined }),
                 });
               }}
-              placeholder="Search"
-              className="w-full border-b border-border bg-transparent py-2 pl-6 font-mono text-xs text-foreground placeholder:text-foreground/30 focus:border-foreground/40 focus:outline-none"
+              placeholder="Search compounds..."
+              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 font-sans text-xs text-slate-900 placeholder:text-slate-400 shadow-sm transition-all duration-200 hover:border-slate-300 focus:border-[rgb(43_90_143)] focus:outline-none focus:ring-2 focus:ring-[rgb(43_90_143)]/15"
             />
           </div>
 
-          <div className="font-mono text-[9px] uppercase tracking-wide text-foreground/35">
+          <div className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-400">
             Category
           </div>
-          <ul className="mt-4 space-y-1">
+          <ul className="mt-3 space-y-1">
             {CATEGORIES.map((c) => (
               <li key={c}>
                 <button
@@ -130,22 +129,25 @@ function ShopPage() {
                       search: (prev: any) => ({ ...prev, cat: c === "All" ? undefined : c }),
                     })
                   }
-                  className={`w-full border-l-2 py-1.5 pl-3 text-left font-mono text-[11px] uppercase tracking-wide transition-colors ${
+                  className={`group relative flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                     cat === c
-                      ? "border-[rgb(43_90_143)] text-foreground"
-                      : "border-transparent text-foreground/45 hover:text-foreground"
+                      ? "border-[rgb(43_90_143)] bg-white text-[rgb(43_90_143)] shadow-sm"
+                      : "border-transparent text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(43_90_143)]"
                   }`}
                 >
-                  {c}
+                  <span>{c}</span>
+                  {cat === c && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[rgb(43_90_143)]" />
+                  )}
                 </button>
               </li>
             ))}
           </ul>
 
-          <div className="mt-8 font-mono text-[9px] uppercase tracking-wide text-foreground/35">
+          <div className="mt-8 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-400">
             Sort by
           </div>
-          <ul className="mt-4 space-y-1">
+          <ul className="mt-3 space-y-1">
             {SORTS.map((s) => (
               <li key={s.key}>
                 <button
@@ -157,23 +159,26 @@ function ShopPage() {
                       }),
                     })
                   }
-                  className={`w-full border-l-2 py-1.5 pl-3 text-left font-mono text-[11px] transition-colors ${
+                  className={`group flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs transition-all duration-200 ${
                     sort === s.key
-                      ? "border-[rgb(93_138_111)] font-semibold text-foreground"
-                      : "border-transparent text-foreground/45 hover:text-foreground"
+                      ? "border-[rgb(93_138_111)] bg-white font-bold text-[rgb(93_138_111)] shadow-sm"
+                      : "border-transparent font-medium text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(93_138_111)]"
                   }`}
                 >
-                  {s.label}
+                  <span>{s.label}</span>
+                  {sort === s.key && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[rgb(93_138_111)]" />
+                  )}
                 </button>
               </li>
             ))}
           </ul>
         </aside>
 
-        {/* Rows */}
+        {/* Product Cards */}
         <section>
           <div className="mb-6 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[11px] text-foreground/45">
+            <span className="mr-2 font-sans text-xs font-bold uppercase tracking-wider text-slate-400">
               {filtered.length} result{filtered.length === 1 ? "" : "s"}
             </span>
             {cat !== "All" && (
@@ -203,19 +208,24 @@ function ShopPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="border border-border bg-card p-12 text-center">
-              <p className="font-display text-3xl text-foreground/60">No matches.</p>
-              <p className="mt-2 text-sm text-foreground/40">Try clearing filters.</p>
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-12 text-center shadow-sm">
+              <p className="font-sans text-3xl font-extrabold text-slate-900">
+                No matches found
+              </p>
+              <p className="mt-2 font-sans text-sm text-slate-500">
+                Try adjusting your search query or clearing active filters.
+              </p>
             </div>
           ) : (
-            <ul className="divide-y divide-border border-y border-border">
+            <div className="space-y-4">
               {filtered.map((p) => (
                 <ProductRow key={p.id} product={p} />
               ))}
-            </ul>
+            </div>
           )}
         </section>
       </div>
+      <div className="py-12" />
     </main>
   );
 }
@@ -225,12 +235,12 @@ function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
   const [added, setAdded] = useState(false);
 
   return (
-    <li className="reveal group">
-      <div className="grid grid-cols-[88px_1fr] items-center gap-5 py-6 sm:grid-cols-[112px_1fr_auto] sm:gap-8">
+    <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[rgb(43_90_143)]/40 hover:bg-slate-50/80 hover:shadow-xl hover:shadow-[rgb(43_90_143)]/5 md:p-6">
+      <div className="grid grid-cols-[88px_1fr] items-center gap-5 sm:grid-cols-[112px_1fr_auto] sm:gap-8">
         <Link
           to="/shop/$productId"
           params={{ productId: product.id }}
-          className="block overflow-hidden rounded-lg border border-border bg-card"
+          className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs transition-colors group-hover:border-[rgb(43_90_143)]/30"
         >
           <img
             src={product.img}
@@ -238,28 +248,32 @@ function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
             loading="lazy"
             width={224}
             height={224}
-            className="h-[88px] w-[88px] object-cover transition-transform duration-500 group-hover:scale-105 sm:h-28 sm:w-28"
+            className="h-[88px] w-[88px] object-cover transition-transform duration-500 group-hover:scale-110 sm:h-28 sm:w-28"
           />
         </Link>
 
         <div className="min-w-0">
-          <div className="font-mono text-[9px] uppercase tracking-wide text-foreground/40">
-            {product.tag === product.category ? product.category : `${product.category} · ${product.tag}`}
+          <div className="font-sans text-[11px] font-bold uppercase tracking-wider text-[rgb(43_90_143)]">
+            {product.tag === product.category
+              ? product.category
+              : `${product.category} · ${product.tag}`}
           </div>
           <Link
             to="/shop/$productId"
             params={{ productId: product.id }}
-            className="mt-1 block font-display text-2xl leading-none sm:text-3xl"
+            className="mt-1 block font-sans text-2xl font-extrabold text-slate-900 transition-colors duration-200 hover:text-[rgb(43_90_143)] sm:text-3xl"
           >
             {product.name}
           </Link>
-          <p className="mt-2 max-w-lg text-sm leading-relaxed text-foreground/55">
+          <p className="mt-2 max-w-lg font-sans text-sm leading-relaxed text-slate-600">
             {product.summary}
           </p>
         </div>
 
-        <div className="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end sm:gap-3">
-          <div className="font-display text-2xl">${product.price}</div>
+        <div className="col-span-2 flex items-center justify-between gap-4 border-t border-slate-100 pt-4 sm:col-span-1 sm:flex-col sm:items-end sm:gap-3 sm:border-0 sm:pt-0">
+          <div className="font-sans text-3xl font-extrabold text-slate-900 transition-colors duration-200 group-hover:text-[rgb(43_90_143)]">
+            ${product.price}
+          </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => {
@@ -267,10 +281,10 @@ function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
                 setAdded(true);
                 setTimeout(() => setAdded(false), 1400);
               }}
-              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-mono text-[10px] uppercase tracking-wide transition-colors ${
+              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all duration-200 active:scale-95 ${
                 added
-                  ? "bg-[rgb(93_138_111)] text-white"
-                  : "bg-[rgb(43_90_143)] text-white hover:bg-[rgb(35_74_119)]"
+                  ? "bg-[rgb(93_138_111)] shadow-[rgb(93_138_111)]/20"
+                  : "bg-[rgb(43_90_143)] hover:bg-[rgb(35_74_119)] hover:shadow-md hover:shadow-[rgb(43_90_143)]/20"
               }`}
             >
               {added ? (
@@ -284,14 +298,15 @@ function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
             <Link
               to="/shop/$productId"
               params={{ productId: product.id }}
-              className="font-mono text-[10px] uppercase tracking-wide text-foreground/50 hover:text-foreground"
+              className="inline-flex items-center gap-1 font-sans text-xs font-bold uppercase tracking-wider text-slate-400 transition-colors duration-200 hover:text-slate-900"
             >
-              Details
+              <span>Details</span>
+              <ArrowRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>
       </div>
-    </li>
+    </div>
   );
 }
 
@@ -304,15 +319,22 @@ function Chip({
   onClear?: () => void;
   tone?: "blue" | "green";
 }) {
-  const color = tone === "green" ? "rgb(93 138 111)" : "rgb(43 90 143)";
+  const isGreen = tone === "green";
   return (
     <span
-      className="inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-[10px]"
-      style={{ borderColor: `${color}55`, color, background: `${color}12` }}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-xs font-bold transition-all duration-200 hover:scale-105 ${
+        isGreen
+          ? "border-[rgb(93_138_111)]/30 bg-[rgb(93_138_111)]/10 text-[rgb(93_138_111)]"
+          : "border-[rgb(43_90_143)]/30 bg-[rgb(43_90_143)]/10 text-[rgb(43_90_143)]"
+      }`}
     >
       {label}
       {onClear && (
-        <button onClick={onClear} aria-label={`Clear ${label}`} className="opacity-60 hover:opacity-100">
+        <button
+          onClick={onClear}
+          aria-label={`Clear ${label}`}
+          className="ml-0.5 text-xs font-extrabold opacity-60 transition-opacity hover:opacity-100"
+        >
           ×
         </button>
       )}

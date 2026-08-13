@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 /**
  * Lightweight peptide-chain particle background.
  * Uses 2D canvas with GPU-friendly draw calls. Reacts to mouse position.
+ * Formatted for clean, light-themed background integration.
  */
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -76,14 +77,14 @@ export function ParticleField() {
           const dx = a.x - b.x, dy = a.y - b.y;
           const d2 = dx * dx + dy * dy;
           if (d2 < 16000) {
-            const alpha = (1 - d2 / 16000) * 0.18;
+            const alpha = (1 - d2 / 16000) * 0.22;
             const same = a.c === b.c;
             ctx.strokeStyle = same
               ? a.c === 0
                 ? `rgba(43,90,143,${alpha})`
                 : `rgba(93,138,111,${alpha})`
-              : `rgba(120,140,165,${alpha * 0.6})`;
-            ctx.lineWidth = 0.5;
+              : `rgba(148,163,184,${alpha * 0.7})`;
+            ctx.lineWidth = 0.75;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -92,15 +93,24 @@ export function ParticleField() {
         }
       }
 
-      // Points
+      // Points & Node Auras
       for (const p of parts) {
         const color = p.c === 0 ? "43,90,143" : "93,138,111";
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
-        grad.addColorStop(0, `rgba(${color},0.28)`);
+        
+        // Soft outer aura gradient for light backgrounds
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
+        grad.addColorStop(0, `rgba(${color},0.35)`);
+        grad.addColorStop(0.4, `rgba(${color},0.12)`);
         grad.addColorStop(1, `rgba(${color},0)`);
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 6, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Crisp central core node
+        ctx.fillStyle = `rgba(${color},0.75)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 0.8, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -119,7 +129,7 @@ export function ParticleField() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 h-full w-full"
+      className="absolute inset-0 h-full w-full pointer-events-none"
       aria-hidden
     />
   );
