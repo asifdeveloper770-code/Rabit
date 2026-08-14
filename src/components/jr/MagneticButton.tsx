@@ -1,7 +1,7 @@
 import { useRef, type ReactNode, type MouseEvent } from "react";
 import { Link } from "@tanstack/react-router";
 
-type Variant = "blue" | "green" | "ghost";
+type Variant = "blue" | "green" | "ghost" | "black";
 
 type CommonProps = {
   children: ReactNode;
@@ -30,6 +30,8 @@ const palettes: Record<Variant, string> = {
   blue: "border-transparent bg-[rgb(43_90_143)] text-white hover:bg-[rgb(35_74_119)] shadow-sm hover:shadow-md hover:shadow-[rgb(43_90_143)]/20",
   green:
     "border-[rgb(93_138_111)]/30 bg-white text-[rgb(93_138_111)] hover:bg-[rgb(93_138_111)]/10 hover:border-[rgb(93_138_111)]/60 shadow-sm",
+  black:
+    "border-[rgb(93_138_111)]/30 bg-black text-white  hover:border-white shadow-sm",
   ghost:
     "border-slate-200 bg-green-600 text-white hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-sm",
 };

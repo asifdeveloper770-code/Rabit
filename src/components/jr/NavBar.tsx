@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import mark from "@/assets/jacked-rabbits-mark.png";
+import name from "@/assets/name.png";
 import { useCart } from "@/lib/cart";
 
 const LINKS = [
@@ -51,11 +52,18 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
             height={44}
             className="h-9 w-9 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
           />
-          <span className="truncate font-sans font-bold text-base tracking-tight sm:text-lg">
+          <img
+            src={name}
+            alt="Jacked Rabbits Wordmark"
+            width={44}
+            height={50}
+            className="h-10 w-28 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+          {/* <span className="truncate font-sans font-bold text-base tracking-tight sm:text-lg">
             <span className="text-slate-900">JACKED</span>
             <span className="mx-1.5 text-[rgb(43_90_143)] font-light">/</span>
             <span className="text-[rgb(93_138_111)]">RABBITS</span>
-          </span>
+          </span> */}
         </Link>
 
         {/* Desktop Navigation Links */}

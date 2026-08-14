@@ -36,7 +36,7 @@ function Index() {
       <Hero />
 
       {/* Credibility Bar */}
-      <section className="border-y border-slate-200/80 bg-white shadow-sm">
+      <section className="border-y border-slate-200/80 bg-white shadow-sm mt-10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-4 font-sans text-xs font-semibold uppercase tracking-wider text-slate-500 md:px-12">
           <span>ISO-17025 Tested</span>
           <span className="hidden h-3 w-px bg-slate-200 md:block" />

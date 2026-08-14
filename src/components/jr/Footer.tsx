@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import mark from "@/assets/jacked-rabbits-mark.png";
+import name from "@/assets/name.png";
 
 export function Footer() {
   return (
@@ -18,10 +19,13 @@ export function Footer() {
                 alt="Jacked Rabbits"
                 className="h-16 w-16 object-contain"
               />
-              <div className="font-sans font-extrabold text-2xl tracking-wide text-slate-900">
-                JACKED <span className="text-[rgb(43_90_143)]">/</span>{" "}
-                <span className="text-[rgb(93_138_111)]">RABBITS</span>
-              </div>
+              <img
+                src={name}
+                alt="Jacked Rabbits Wordmark"
+                width={44}
+                height={50}
+                className="h-10 w-28 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
             <p className="mt-6 max-w-sm font-sans text-sm leading-relaxed text-slate-600">
               Research-grade peptides for the relentless. Formulated in the USA.

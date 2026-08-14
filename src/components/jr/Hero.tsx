@@ -45,7 +45,7 @@ export function Hero() {
           <MagneticButton variant="blue" to="/shop?category=Peptides">
             Shop Peptides
           </MagneticButton>
-          <MagneticButton variant="blue" to="/shop?category=Injectibles">
+          <MagneticButton variant="black" to="/shop?category=Injectibles">
             Shop Injectibles
           </MagneticButton>
           <MagneticButton variant="ghost" to="/shop?category=Oral">
@@ -56,7 +56,7 @@ export function Hero() {
           </MagneticButton>
         </div>
 
-        <div
+        {/* <div
           className="mt-16 grid w-full grid-cols-3 gap-4 border-t border-slate-200/80 pt-8 md:mt-20 md:gap-10"
           style={{ animation: "jr-fade-up 1.4s 1s both" }}
         >
@@ -74,16 +74,16 @@ export function Hero() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 font-sans text-[11px] font-bold uppercase tracking-widest text-slate-400">
+      {/* <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 font-sans text-[11px] font-bold uppercase tracking-widest text-slate-400">
         <div className="flex flex-col items-center gap-2">
           <span>Scroll</span>
           <span className="h-8 w-px bg-gradient-to-b from-slate-300 to-transparent" />
         </div>
-      </div>
+      </div> */}
     </section>
   );
 }
