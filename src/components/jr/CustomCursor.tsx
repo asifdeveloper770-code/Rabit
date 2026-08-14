@@ -5,7 +5,13 @@ export function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
+    // Strictly target desktop devices (precise cursor + hover capability + desktop screen width)
+    const isDesktop = window.matchMedia(
+      "(pointer: fine) and (hover: hover) and (min-width: 1024px)"
+    ).matches;
+
+    if (!isDesktop) return;
+
     document.documentElement.classList.add("jr-cursor-on");
 
     let mx = window.innerWidth / 2;
@@ -32,16 +38,24 @@ export function CustomCursor() {
     };
 
     const onOver = (e: MouseEvent) => {
-      const el = (e.target as HTMLElement)?.closest<HTMLElement>("[data-magnetic], a, button");
+      const el = (e.target as HTMLElement)?.closest<HTMLElement>(
+        "[data-magnetic], a, button"
+      );
       hovered = el || null;
       scale = hovered ? 2.2 : 1;
-      
+
       if (ringRef.current) {
         if (hovered) {
-          ringRef.current.classList.add("border-[rgb(93_138_111)]/60", "bg-[rgb(93_138_111)]/5");
+          ringRef.current.classList.add(
+            "border-[rgb(93_138_111)]/60",
+            "bg-[rgb(93_138_111)]/5"
+          );
           ringRef.current.classList.remove("border-[rgb(43_90_143)]/40");
         } else {
-          ringRef.current.classList.remove("border-[rgb(93_138_111)]/60", "bg-[rgb(93_138_111)]/5");
+          ringRef.current.classList.remove(
+            "border-[rgb(93_138_111)]/60",
+            "bg-[rgb(93_138_111)]/5"
+          );
           ringRef.current.classList.add("border-[rgb(43_90_143)]/40");
         }
       }
@@ -62,6 +76,7 @@ export function CustomCursor() {
 
     window.addEventListener("mousemove", onMove, { passive: true });
     window.addEventListener("mouseover", onOver, { passive: true });
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
@@ -74,12 +89,12 @@ export function CustomCursor() {
     <>
       <div
         ref={ringRef}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-9 w-9 rounded-full border border-[rgb(43_90_143)]/40 transition-[width,height,border-color,background-color] duration-300"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] hidden lg:block h-9 w-9 rounded-full border border-[rgb(43_90_143)]/40 transition-[width,height,border-color,background-color] duration-300"
         style={{ boxShadow: "none" }}
       />
       <div
         ref={dotRef}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-slate-900"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] hidden lg:block h-1.5 w-1.5 rounded-full bg-slate-900"
       />
     </>
   );

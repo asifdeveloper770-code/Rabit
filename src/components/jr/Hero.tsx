@@ -52,11 +52,14 @@ export function Hero() {
           className="mt-8 flex w-full flex-col items-center gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:gap-4"
           style={{ animation: "jr-fade-up 1.2s 0.7s both" }}
         >
-          <MagneticButton variant="blue" to="/science">
-            Explore the Science
+          <MagneticButton variant="blue" to="/shop?category=Injectibles">
+            Shop Injectibles
+          </MagneticButton>
+          <MagneticButton variant="ghost" to="/shop?category=Oral">
+            Shop Orals
           </MagneticButton>
           <MagneticButton variant="green" to="/shop">
-            Shop Peptides
+            Shop All
           </MagneticButton>
         </div>
 

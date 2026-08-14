@@ -36,7 +36,7 @@ const SORTS = [
   { key: "popularity", label: "Most popular" },
   { key: "price-asc", label: "Price · low to high" },
   { key: "price-desc", label: "Price · high to low" },
-  { key: "purity", label: "Highest purity" },
+  // { key: "purity", label: "Highest purity" },
 ] as const;
 
 type SortKey = (typeof SORTS)[number]["key"];

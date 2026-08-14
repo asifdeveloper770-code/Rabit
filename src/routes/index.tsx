@@ -109,7 +109,7 @@ function Index() {
       </section>
 
       {/* Standard / Purity Section */}
-      <section className="border-t border-slate-200/80 bg-slate-100/60 py-20 md:py-28">
+      {/* <section className="border-t border-slate-200/80 bg-slate-100/60 py-20 md:py-28">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2 md:px-12">
           <div className="reveal order-2 flex flex-col gap-6 md:order-1">
             <div>
@@ -163,10 +163,10 @@ function Index() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Quote + CTA Section */}
-      <section className="bg-white py-24 md:py-32">
+      {/* <section className="bg-white py-24 md:py-32">
         <div className="mx-auto max-w-3xl px-6 text-center md:px-12">
           <blockquote className="reveal font-sans text-2xl font-bold leading-tight tracking-tight text-slate-900 md:text-4xl">
             "I've tried every stack. Jacked Rabbits is the standard now."
@@ -183,7 +183,7 @@ function Index() {
             </MagneticButton>
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 }

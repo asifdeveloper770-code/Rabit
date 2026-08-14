@@ -9,7 +9,7 @@ export type Product = {
   price: number;
   img: string;
   accent: "blue" | "green";
-  category: "Recovery" | "Growth" | "Metabolic" | "Longevity";
+  category: "Injectibles" | "Oral" ;
   summary: string;
   description: string;
   specs: { label: string; value: string }[];
@@ -20,11 +20,11 @@ export const PRODUCTS: Product[] = [
   {
     id: "bpc-157",
     name: "BPC-157",
-    tag: "Recovery",
+    tag: "Injectible",
     price: 89,
     img: p1,
     accent: "blue",
-    category: "Recovery",
+    category: "Injectibles",
     summary: "Body Protection Compound — the gold standard for connective tissue repair.",
     description:
       "A 15-amino-acid pentadecapeptide derived from a gastric protein. Rapidly accelerates tendon, ligament, and gut lining repair. Angiogenic, cytoprotective, and remarkably stable.",
@@ -43,7 +43,7 @@ export const PRODUCTS: Product[] = [
     price: 129,
     img: p2,
     accent: "green",
-    category: "Recovery",
+    category: "Injectibles",
     summary: "Systemic actin regulator — flexibility, wound healing, and cardiac support.",
     description:
       "A synthetic fragment of Thymosin Beta-4. Upregulates actin, drives cell migration, and modulates inflammation. Ideal for chronic injuries and full-body recomp phases.",
@@ -62,7 +62,7 @@ export const PRODUCTS: Product[] = [
     price: 179,
     img: p3,
     accent: "blue",
-    category: "Growth",
+    category: "Injectibles",
     summary: "Long-arg-3 IGF-1 — hypertrophy driver with prolonged serum activity.",
     description:
       "Extended half-life analog of IGF-1. Drives satellite cell proliferation, protein synthesis, and hyperplasia. Reserved for advanced protocols.",
@@ -81,7 +81,7 @@ export const PRODUCTS: Product[] = [
     price: 74,
     img: p1,
     accent: "green",
-    category: "Longevity",
+    category: "Oral",
     summary: "Copper peptide — skin, hair, and systemic regenerative signaling.",
     description:
       "A naturally occurring tripeptide complexed with copper. Modulates gene expression toward a youthful state and supports antioxidant defense.",
@@ -100,7 +100,7 @@ export const PRODUCTS: Product[] = [
     price: 149,
     img: p2,
     accent: "blue",
-    category: "Metabolic",
+    category: "Oral",
     summary: "Mitochondrial-derived peptide for insulin sensitivity and endurance.",
     description:
       "Encoded within mitochondrial DNA. Improves glucose uptake, fat oxidation, and cellular energy output. A metabolic reset in a vial.",
@@ -119,7 +119,7 @@ export const PRODUCTS: Product[] = [
     price: 119,
     img: p3,
     accent: "green",
-    category: "Growth",
+    category: "Oral",
     summary: "GHRH analog — amplifies natural growth hormone pulses.",
     description:
       "Extended-half-life growth hormone releasing hormone analog. Restores youthful GH pulses without receptor desensitization. Pair with Ipamorelin.",
@@ -138,7 +138,7 @@ export const PRODUCTS: Product[] = [
     price: 99,
     img: p1,
     accent: "blue",
-    category: "Growth",
+    category: "Injectibles",
     summary: "Selective GH secretagogue — clean pulse, no cortisol spike.",
     description:
       "A pentapeptide ghrelin mimetic. Triggers clean, selective growth hormone release without prolactin or cortisol elevation. The 'sleep stack' favorite.",
@@ -157,7 +157,7 @@ export const PRODUCTS: Product[] = [
     price: 189,
     img: p2,
     accent: "green",
-    category: "Metabolic",
+    category: "Oral",
     summary: "Visceral fat reduction with lean tissue preservation.",
     description:
       "A stabilized GHRH analog clinically validated for visceral adipose reduction. Elite recomposition tool for advanced users.",
@@ -176,7 +176,7 @@ export const PRODUCTS: Product[] = [
     price: 84,
     img: p3,
     accent: "blue",
-    category: "Metabolic",
+    category: "Oral",
     summary: "Anti-obesity fragment — lipolysis without GH side-effects.",
     description:
       "A modified fragment of the C-terminus of HGH. Stimulates lipolysis and inhibits lipogenesis without affecting insulin sensitivity or growth pathways.",
@@ -195,7 +195,7 @@ export const PRODUCTS: Product[] = [
     price: 109,
     img: p1,
     accent: "green",
-    category: "Longevity",
+    category: "Oral",
     summary: "Telomerase activator — deep sleep, circadian, cellular longevity.",
     description:
       "A tetrapeptide isolated from the pineal gland. Upregulates telomerase, restores melatonin rhythm, and supports cellular senescence markers.",
@@ -214,7 +214,7 @@ export const PRODUCTS: Product[] = [
     price: 94,
     img: p2,
     accent: "blue",
-    category: "Longevity",
+    category: "Injectibles",
     summary: "Neuropeptide — focus, BDNF upregulation, neuroprotection.",
     description:
       "A synthetic ACTH fragment. Upregulates BDNF, enhances cognition, and protects against oxidative CNS stress. The mental edge under load.",
@@ -233,7 +233,7 @@ export const PRODUCTS: Product[] = [
     price: 89,
     img: p3,
     accent: "green",
-    category: "Longevity",
+    category: "Oral",
     summary: "Anxiolytic peptide — calm focus without sedation.",
     description:
       "A synthetic tuftsin analog. Modulates GABAergic tone, immune function, and enkephalin degradation. Focus under pressure, without benzo blur.",
@@ -247,7 +247,7 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const CATEGORIES = ["All", "Recovery", "Growth", "Metabolic", "Longevity"] as const;
+export const CATEGORIES = ["All", "Injectibles", "Oral"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export function getProduct(id: string) {

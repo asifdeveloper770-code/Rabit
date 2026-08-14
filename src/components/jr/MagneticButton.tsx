@@ -31,7 +31,7 @@ const palettes: Record<Variant, string> = {
   green:
     "border-[rgb(93_138_111)]/30 bg-white text-[rgb(93_138_111)] hover:bg-[rgb(93_138_111)]/10 hover:border-[rgb(93_138_111)]/60 shadow-sm",
   ghost:
-    "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-sm",
+    "border-slate-200 bg-green-600 text-white hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-sm",
 };
 
 const baseCls =
