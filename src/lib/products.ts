@@ -9,7 +9,7 @@ export type Product = {
   price: number;
   img: string;
   accent: "blue" | "green";
-  category: "Injectibles" | "Oral" ;
+  category: "Injectibles" | "Oral" | "Peptides";
   summary: string;
   description: string;
   specs: { label: string; value: string }[];
@@ -247,7 +247,7 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const CATEGORIES = ["All", "Injectibles", "Oral"] as const;
+export const CATEGORIES = ["All", "Injectibles", "Oral", "Peptides"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export function getProduct(id: string) {

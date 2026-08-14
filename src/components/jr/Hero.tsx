@@ -18,17 +18,7 @@ export function Hero() {
           paddingRight: "max(env(safe-area-inset-right), 1.5rem)",
         }}
       >
-        <span
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/90 px-4 py-1.5 font-sans text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-sm backdrop-blur"
-          style={{ animation: "jr-fade-up 1s 0.1s both" }}
-        >
-          <span
-            className="h-2 w-2 rounded-full bg-[rgb(93_138_111)]"
-            style={{ boxShadow: "0 0 10px rgb(93 138 111)" }}
-          />
-          Batch #247 · HPLC Verified
-        </span>
-
+       
         <div className="jr-rabbit-stage relative w-full">
           {/* Colored aura */}
           <div
@@ -52,6 +42,9 @@ export function Hero() {
           className="mt-8 flex w-full flex-col items-center gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:gap-4"
           style={{ animation: "jr-fade-up 1.2s 0.7s both" }}
         >
+          <MagneticButton variant="blue" to="/shop?category=Peptides">
+            Shop Peptides
+          </MagneticButton>
           <MagneticButton variant="blue" to="/shop?category=Injectibles">
             Shop Injectibles
           </MagneticButton>
