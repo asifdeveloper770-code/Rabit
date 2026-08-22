@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -89,7 +90,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap",
       },
       { rel: "stylesheet", href: appCss },
-      // { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -114,13 +114,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+
+  // Check if current route is part of the admin/dashboard section
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <QueryClientProvider client={queryClient}>
       <CustomCursor />
-      <NavBar transparent />
+      {!isAdminRoute && <NavBar transparent />}
       <Outlet />
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </QueryClientProvider>
   );
 }

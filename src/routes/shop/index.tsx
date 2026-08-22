@@ -1,9 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PRODUCTS, CATEGORIES, type Category } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useReveal } from "@/lib/useReveal";
 import { Search, Check, ArrowRight } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+type Product = {
+  id: string;
+  name: string;
+  tag: string | null;
+  price: number;
+  img: string | null;
+  accent: string | null;
+  category: string | null;
+  summary: string | null;
+  description: string | null;
+  specs: Array<{
+    label: string;
+    value: string;
+  }> | null;
+  stack: string[] | null;
+  stock: number | null;
+};
 
 export const Route = createFileRoute("/shop/")({
   head: () => ({
@@ -52,32 +71,130 @@ function popularityOf(p: (typeof PRODUCTS)[number]) {
 
 function ShopPage() {
   useReveal();
+
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+
   const [q, setQ] = useState(search.q ?? "");
-  const cat: Category = (CATEGORIES as readonly string[]).includes(search.cat ?? "")
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const PRODUCTS_PER_PAGE = 10;
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const cat: Category = (CATEGORIES as readonly string[]).includes(
+    search.cat ?? ""
+  )
     ? (search.cat as Category)
     : "All";
 
-  const sort: SortKey = (SORTS.some((s) => s.key === search.sort)
-    ? search.sort
-    : "popularity") as SortKey;
+  const sort: SortKey = (
+    SORTS.some((s) => s.key === search.sort)
+      ? search.sort
+      : "popularity"
+  ) as SortKey;
+
+  useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      setError("");
+
+      const { data, error } = await supabase
+        .from("products")
+        .select(`
+          id,
+          name,
+          tag,
+          price,
+          img,
+          accent,
+          category,
+          summary,
+          description,
+          specs,
+          stack,
+          stock
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Failed to fetch products:", error);
+        setError(error.message);
+        setProducts([]);
+      } else {
+        setProducts(
+          (data ?? []).map((product) => ({
+            ...product,
+            price: Number(product.price),
+          }))
+        );
+      }
+
+      setLoading(false);
+    }
+
+    fetchProducts();
+  }, []);
 
   const filtered = useMemo(() => {
-    const list = PRODUCTS.filter((p) => {
-      if (cat !== "All" && p.category !== cat) return false;
-      if (q && !`${p.name} ${p.tag} ${p.summary}`.toLowerCase().includes(q.toLowerCase()))
+    const list = products.filter((p) => {
+      if (cat !== "All" && p.category !== cat) {
         return false;
+      }
+
+      if (
+        q &&
+        !`${p.name} ${p.tag ?? ""} ${p.summary ?? ""}`
+          .toLowerCase()
+          .includes(q.toLowerCase())
+      ) {
+        return false;
+      }
+
       return true;
     });
+
     const sorted = [...list];
-    if (sort === "price-asc") sorted.sort((a, b) => a.price - b.price);
-    if (sort === "price-desc") sorted.sort((a, b) => b.price - a.price);
-    if (sort === "purity") sorted.sort((a, b) => purityOf(b) - purityOf(a));
-    if (sort === "popularity")
-      sorted.sort((a, b) => popularityOf(b) - popularityOf(a));
+
+    if (sort === "price-asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    }
+
+    if (sort === "price-desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+
+    if (sort === "popularity") {
+      sorted.sort((a, b) => {
+        return (
+          products.findIndex((x) => x.id === b.id) -
+          products.findIndex((x) => x.id === a.id)
+        );
+      });
+    }
+
     return sorted;
+  }, [products, cat, q, sort]);
+
+  const totalPages = Math.ceil(
+    filtered.length / PRODUCTS_PER_PAGE
+  );
+
+  const startIndex =
+    (currentPage - 1) * PRODUCTS_PER_PAGE;
+
+  const endIndex =
+    startIndex + PRODUCTS_PER_PAGE;
+
+  const paginatedProducts = filtered.slice(
+    startIndex,
+    endIndex
+  );
+  useEffect(() => {
+    setCurrentPage(1);
   }, [cat, q, sort]);
+
 
   return (
     <main className="relative min-h-screen bg-slate-50 pt-28 font-sans text-slate-800 antialiased selection:bg-[rgb(43_90_143)]/10 selection:text-[rgb(43_90_143)]">
@@ -93,8 +210,8 @@ function ShopPage() {
             </h1>
           </div>
           <p className="max-w-sm font-sans text-sm leading-relaxed text-slate-600">
-            {PRODUCTS.length} compounds, each shipped with a lot-specific
-            certificate of analysis.
+            {products.length} compounds available. Select a compound to view
+            available specifications, variants, pricing, and product details.
           </p>
         </div>
       </section>
@@ -129,11 +246,10 @@ function ShopPage() {
                       search: (prev: any) => ({ ...prev, cat: c === "All" ? undefined : c }),
                     })
                   }
-                  className={`group relative flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
-                    cat === c
-                      ? "border-[rgb(43_90_143)] bg-white text-[rgb(43_90_143)] shadow-sm"
-                      : "border-transparent text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(43_90_143)]"
-                  }`}
+                  className={`group relative flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs font-bold uppercase tracking-wider transition-all duration-200 ${cat === c
+                    ? "border-[rgb(43_90_143)] bg-white text-[rgb(43_90_143)] shadow-sm"
+                    : "border-transparent text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(43_90_143)]"
+                    }`}
                 >
                   <span>{c}</span>
                   {cat === c && (
@@ -159,11 +275,10 @@ function ShopPage() {
                       }),
                     })
                   }
-                  className={`group flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs transition-all duration-200 ${
-                    sort === s.key
-                      ? "border-[rgb(93_138_111)] bg-white font-bold text-[rgb(93_138_111)] shadow-sm"
-                      : "border-transparent font-medium text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(93_138_111)]"
-                  }`}
+                  className={`group flex w-full items-center justify-between rounded-lg border-l-2 py-2 pl-3 pr-2 text-left font-sans text-xs transition-all duration-200 ${sort === s.key
+                    ? "border-[rgb(93_138_111)] bg-white font-bold text-[rgb(93_138_111)] shadow-sm"
+                    : "border-transparent font-medium text-slate-500 hover:bg-slate-100/70 hover:pl-4 hover:text-[rgb(93_138_111)]"
+                    }`}
                 >
                   <span>{s.label}</span>
                   {sort === s.key && (
@@ -181,28 +296,49 @@ function ShopPage() {
             <span className="mr-2 font-sans text-xs font-bold uppercase tracking-wider text-slate-400">
               {filtered.length} result{filtered.length === 1 ? "" : "s"}
             </span>
+
             {cat !== "All" && (
               <Chip
                 label={cat}
-                onClear={() => navigate({ search: (p: any) => ({ ...p, cat: undefined }) })}
+                onClear={() =>
+                  navigate({
+                    search: (p: any) => ({
+                      ...p,
+                      cat: undefined,
+                    }),
+                  })
+                }
               />
             )}
+
             {q && (
               <Chip
                 label={`“${q}”`}
                 onClear={() => {
                   setQ("");
-                  navigate({ search: (p: any) => ({ ...p, q: undefined }) });
+                  navigate({
+                    search: (p: any) => ({
+                      ...p,
+                      q: undefined,
+                    }),
+                  });
                 }}
               />
             )}
+
             <Chip
               label={SORTS.find((s) => s.key === sort)!.label}
               tone="green"
               onClear={
                 sort === "popularity"
                   ? undefined
-                  : () => navigate({ search: (p: any) => ({ ...p, sort: undefined }) })
+                  : () =>
+                    navigate({
+                      search: (p: any) => ({
+                        ...p,
+                        sort: undefined,
+                      }),
+                    })
               }
             />
           </div>
@@ -212,52 +348,168 @@ function ShopPage() {
               <p className="font-sans text-3xl font-extrabold text-slate-900">
                 No matches found
               </p>
+
               <p className="mt-2 font-sans text-sm text-slate-500">
                 Try adjusting your search query or clearing active filters.
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {filtered.map((p) => (
-                <ProductRow key={p.id} product={p} />
-              ))}
-            </div>
+            <>
+              {/* Products */}
+              <div className="space-y-4">
+                {paginatedProducts.map((p) => (
+                  <ProductRow
+                    key={p.id}
+                    product={p}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-6 sm:flex-row">
+
+                  {/* Results */}
+                  <div className="text-xs font-semibold text-slate-400">
+                    Showing{" "}
+                    <span className="text-slate-700">
+                      {startIndex + 1}
+                    </span>
+                    {" – "}
+                    <span className="text-slate-700">
+                      {Math.min(
+                        endIndex,
+                        filtered.length
+                      )}
+                    </span>
+                    {" of "}
+                    <span className="text-slate-700">
+                      {filtered.length}
+                    </span>{" "}
+                    products
+                  </div>
+
+                  {/* Controls */}
+                  <div className="flex items-center gap-2">
+
+                    {/* Previous */}
+                    <button
+                      type="button"
+                      disabled={currentPage === 1}
+                      onClick={() => {
+                        setCurrentPage((page) =>
+                          Math.max(1, page - 1)
+                        );
+
+                        window.scrollTo({
+                          top: 0,
+                          behavior: "smooth",
+                        });
+                      }}
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-600 transition-all hover:border-[rgb(43_90_143)] hover:text-[rgb(43_90_143)] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Previous
+                    </button>
+
+                    {/* Pages */}
+                    <div className="flex items-center gap-1">
+                      {Array.from(
+                        { length: totalPages },
+                        (_, index) => index + 1
+                      ).map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => {
+                            setCurrentPage(page);
+
+                            window.scrollTo({
+                              top: 0,
+                              behavior: "smooth",
+                            });
+                          }}
+                          className={`flex h-9 min-w-9 items-center justify-center rounded-xl px-3 text-xs font-bold transition-all ${currentPage === page
+                            ? "bg-[rgb(43_90_143)] text-white shadow-sm"
+                            : "border border-slate-200 bg-white text-slate-500 hover:border-[rgb(43_90_143)] hover:text-[rgb(43_90_143)]"
+                            }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Next */}
+                    <button
+                      type="button"
+                      disabled={
+                        currentPage === totalPages
+                      }
+                      onClick={() => {
+                        setCurrentPage((page) =>
+                          Math.min(
+                            totalPages,
+                            page + 1
+                          )
+                        );
+
+                        window.scrollTo({
+                          top: 0,
+                          behavior: "smooth",
+                        });
+                      }}
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-600 transition-all hover:border-[rgb(43_90_143)] hover:text-[rgb(43_90_143)] disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </section>
       </div>
+
       <div className="py-12" />
     </main>
   );
 }
 
-function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
-  const { add } = useCart();
-  const [added, setAdded] = useState(false);
-
+function ProductRow({ product }: { product: Product }) {
   return (
     <div className="group relative rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[rgb(43_90_143)]/40 hover:bg-slate-50/80 hover:shadow-xl hover:shadow-[rgb(43_90_143)]/5 md:p-6">
       <div className="grid grid-cols-[88px_1fr] items-center gap-5 sm:grid-cols-[112px_1fr_auto] sm:gap-8">
+
+        {/* IMAGE */}
         <Link
           to="/shop/$productId"
           params={{ productId: product.id }}
           className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs transition-colors group-hover:border-[rgb(43_90_143)]/30"
         >
-          <img
-            src={product.img}
-            alt={product.name}
-            loading="lazy"
-            width={224}
-            height={224}
-            className="h-[88px] w-[88px] object-cover transition-transform duration-500 group-hover:scale-110 sm:h-28 sm:w-28"
-          />
+          {product.img ? (
+            <img
+              src={product.img}
+              alt={product.name}
+              loading="lazy"
+              width={224}
+              height={224}
+              className="h-[88px] w-[88px] object-cover transition-transform duration-500 group-hover:scale-110 sm:h-28 sm:w-28"
+            />
+          ) : (
+            <div className="flex h-[88px] w-[88px] items-center justify-center bg-slate-50 text-[10px] font-bold uppercase text-slate-400 sm:h-28 sm:w-28">
+              No Image
+            </div>
+          )}
         </Link>
 
+        {/* PRODUCT INFORMATION */}
         <div className="min-w-0">
+          {/* CATEGORY */}
           <div className="font-sans text-[11px] font-bold uppercase tracking-wider text-[rgb(43_90_143)]">
-            {product.tag === product.category
-              ? product.category
-              : `${product.category} · ${product.tag}`}
+            {product.category || "Research Compound"}
           </div>
+
+          {/* NAME */}
           <Link
             to="/shop/$productId"
             params={{ productId: product.id }}
@@ -265,51 +517,48 @@ function ProductRow({ product }: { product: (typeof PRODUCTS)[number] }) {
           >
             {product.name}
           </Link>
-          <p className="mt-2 max-w-lg font-sans text-sm leading-relaxed text-slate-600">
-            {product.summary}
-          </p>
+
+          {/* SHORT DESCRIPTION */}
+          {product.summary && (
+            <p className="mt-2 max-w-lg font-sans text-sm leading-relaxed text-slate-600">
+              {product.summary}
+            </p>
+          )}
+
+          {/* GENERAL PRODUCT INFO */}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {product.tag && product.tag !== product.category && (
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                {product.tag}
+              </span>
+            )}
+
+            {product.specs?.slice(0, 2).map((spec) => (
+              <span
+                key={spec.label}
+                className="rounded-full bg-[rgb(43_90_143)]/5 px-3 py-1 text-[10px] font-semibold text-[rgb(43_90_143)]"
+              >
+                {spec.label}: {spec.value}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <div className="col-span-2 flex items-center justify-between gap-4 border-t border-slate-100 pt-4 sm:col-span-1 sm:flex-col sm:items-end sm:gap-3 sm:border-0 sm:pt-0">
-          <div className="font-sans text-3xl font-extrabold text-slate-900 transition-colors duration-200 group-hover:text-[rgb(43_90_143)]">
-            ${product.price}
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                add(product.id);
-                setAdded(true);
-                setTimeout(() => setAdded(false), 1400);
-              }}
-              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all duration-200 active:scale-95 ${
-                added
-                  ? "bg-[rgb(93_138_111)] shadow-[rgb(93_138_111)]/20"
-                  : "bg-[rgb(43_90_143)] hover:bg-[rgb(35_74_119)] hover:shadow-md hover:shadow-[rgb(43_90_143)]/20"
-              }`}
-            >
-              {added ? (
-                <>
-                  <Check className="h-3.5 w-3.5" /> Added
-                </>
-              ) : (
-                "Add to cart"
-              )}
-            </button>
-            <Link
-              to="/shop/$productId"
-              params={{ productId: product.id }}
-              className="inline-flex items-center gap-1 font-sans text-xs font-bold uppercase tracking-wider text-slate-400 transition-colors duration-200 hover:text-slate-900"
-            >
-              <span>Details</span>
-              <ArrowRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+        {/* DETAILS BUTTON */}
+        <div className="col-span-2 flex items-center justify-end border-t border-slate-100 pt-4 sm:col-span-1 sm:border-0 sm:pt-0">
+          <Link
+            to="/shop/$productId"
+            params={{ productId: product.id }}
+            className="inline-flex items-center gap-2 rounded-full bg-[rgb(43_90_143)] px-5 py-2.5 font-sans text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all duration-200 hover:bg-[rgb(35_74_119)] hover:shadow-md hover:shadow-[rgb(43_90_143)]/20 active:scale-95"
+          >
+            <span>View variants</span>
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </div>
     </div>
   );
 }
-
 function Chip({
   label,
   onClear,
@@ -322,11 +571,10 @@ function Chip({
   const isGreen = tone === "green";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-xs font-bold transition-all duration-200 hover:scale-105 ${
-        isGreen
-          ? "border-[rgb(93_138_111)]/30 bg-[rgb(93_138_111)]/10 text-[rgb(93_138_111)]"
-          : "border-[rgb(43_90_143)]/30 bg-[rgb(43_90_143)]/10 text-[rgb(43_90_143)]"
-      }`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-sans text-xs font-bold transition-all duration-200 hover:scale-105 ${isGreen
+        ? "border-[rgb(93_138_111)]/30 bg-[rgb(93_138_111)]/10 text-[rgb(93_138_111)]"
+        : "border-[rgb(43_90_143)]/30 bg-[rgb(43_90_143)]/10 text-[rgb(43_90_143)]"
+        }`}
     >
       {label}
       {onClear && (

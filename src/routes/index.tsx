@@ -61,7 +61,7 @@ function Index() {
               </h2>
             </div>
             <Link
-              to="/shop "
+              to="/shop"
               className="font-sans text-xs font-semibold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900"
             >
               Full Catalogue →

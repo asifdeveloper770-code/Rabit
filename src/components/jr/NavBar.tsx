@@ -17,6 +17,7 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
   const { count } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [animateCart, setAnimateCart] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -28,6 +29,14 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // Trigger brief bounce/scale animation when item count increases
+  useEffect(() => {
+    if (count <= 0) return;
+    setAnimateCart(true);
+    const timer = setTimeout(() => setAnimateCart(false), 300);
+    return () => clearTimeout(timer);
+  }, [count]);
+
   const solid = !transparent || scrolled;
 
   return (
@@ -35,7 +44,7 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         solid
           ? "border-b border-slate-200/80 bg-white/80 shadow-sm backdrop-blur-xl"
-          : "bg-transparent border-b border-transparent"
+          : "border-b border-transparent bg-transparent"
       }`}
       style={{
         paddingLeft: "max(env(safe-area-inset-left), 0px)",
@@ -44,7 +53,7 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3.5 sm:px-8 md:px-12">
         {/* Brand Logo */}
-        <Link to="/" className="flex min-w-0 items-center gap-3 group">
+        <Link to="/" className="group flex min-w-0 items-center gap-3">
           <img
             src={mark}
             alt="Jacked Rabbits Logo"
@@ -59,11 +68,6 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
             height={50}
             className="h-10 w-28 shrink-0 object-contain transition-transform duration-300 group-hover:scale-105"
           />
-          {/* <span className="truncate font-sans font-bold text-base tracking-tight sm:text-lg">
-            <span className="text-slate-900">JACKED</span>
-            <span className="mx-1.5 text-[rgb(43_90_143)] font-light">/</span>
-            <span className="text-[rgb(93_138_111)]">RABBITS</span>
-          </span> */}
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -73,7 +77,7 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
-              className="text-slate-600 transition-colors duration-200 hover:text-slate-900 relative py-1 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-slate-900 after:scale-x-0 after:transition-transform hover:after:scale-x-100"
+              className="relative py-1 text-slate-600 transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:scale-x-0 after:bg-slate-900 after:transition-transform hover:text-slate-900 hover:after:scale-x-100"
               activeProps={{
                 className: "text-slate-900 after:scale-x-100 font-bold",
               }}
@@ -94,7 +98,9 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
             <span className="hidden sm:inline">Cart</span>
             {count > 0 && (
               <span
-                className="ml-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(93_138_111)] px-1.5 text-[11px] font-bold text-white"
+                className={`ml-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[rgb(93_138_111)] px-1.5 text-[11px] font-bold text-white transition-transform duration-300 ${
+                  animateCart ? "scale-125" : "scale-100"
+                }`}
                 style={{ boxShadow: "0 2px 8px rgb(93 138 111 / 0.4)" }}
               >
                 {count}
@@ -114,7 +120,7 @@ export function NavBar({ transparent = false }: { transparent?: boolean }) {
 
       {/* Mobile Drawer */}
       {open && (
-        <div className="border-t border-slate-200/80 bg-white/95 backdrop-blur-xl md:hidden shadow-lg">
+        <div className="border-t border-slate-200/80 bg-white/95 shadow-lg backdrop-blur-xl md:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4">
             {LINKS.map((l) => (
               <Link

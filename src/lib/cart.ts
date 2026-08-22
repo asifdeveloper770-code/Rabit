@@ -1,62 +1,183 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export type CartItem = { id: string; qty: number };
+export type CartItem = {
+  id: string;
+  qty: number;
+};
 
 const KEY = "jr_cart_v1";
 
-function read(): CartItem[] {
-  if (typeof window === "undefined") return [];
+function readCart(): CartItem[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
   try {
     const raw = window.localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
-  } catch {
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .filter(
+        (item): item is CartItem =>
+          item &&
+          typeof item.id === "string" &&
+          item.id.length > 0 &&
+          typeof item.qty === "number" &&
+          Number.isFinite(item.qty) &&
+          item.qty > 0
+      )
+      .map((item) => ({
+        id: String(item.id),
+        qty: Math.max(1, Math.floor(item.qty)),
+      }));
+  } catch (error) {
+    console.error("Failed to read cart:", error);
     return [];
   }
 }
 
-function write(items: CartItem[]) {
-  window.localStorage.setItem(KEY, JSON.stringify(items));
-  window.dispatchEvent(new CustomEvent("jr:cart", { detail: items }));
+function saveCart(items: CartItem[]) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const cleanItems = items
+    .filter((item) => item.id && item.qty > 0)
+    .map((item) => ({
+      id: String(item.id),
+      qty: Math.floor(item.qty),
+    }));
+
+  localStorage.setItem(KEY, JSON.stringify(cleanItems));
+
+  // Same-tab synchronization
+  window.dispatchEvent(
+    new CustomEvent("jr:cart", {
+      detail: cleanItems,
+    })
+  );
 }
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    setItems(read());
-    const sync = () => setItems(read());
-    window.addEventListener("jr:cart", sync);
-    window.addEventListener("storage", sync);
+    const syncCart = () => {
+      setItems(readCart());
+    };
+
+    // Initial load
+    syncCart();
+
+    // Same browser tab
+    window.addEventListener("jr:cart", syncCart);
+
+    // Other browser tabs
+    window.addEventListener("storage", syncCart);
+
     return () => {
-      window.removeEventListener("jr:cart", sync);
-      window.removeEventListener("storage", sync);
+      window.removeEventListener("jr:cart", syncCart);
+      window.removeEventListener("storage", syncCart);
     };
   }, []);
 
   const add = useCallback((id: string, qty = 1) => {
-    const current = read();
-    const found = current.find((i) => i.id === id);
-    const next = found
-      ? current.map((i) => (i.id === id ? { ...i, qty: i.qty + qty } : i))
-      : [...current, { id, qty }];
-    write(next);
+    if (!id || qty <= 0) {
+      return;
+    }
+
+    const productId = String(id);
+    const current = readCart();
+
+    const existing = current.find(
+      (item) => String(item.id) === productId
+    );
+
+    const next = existing
+      ? current.map((item) =>
+          String(item.id) === productId
+            ? {
+                ...item,
+                qty: item.qty + qty,
+              }
+            : item
+        )
+      : [
+          ...current,
+          {
+            id: productId,
+            qty,
+          },
+        ];
+
+    saveCart(next);
+
+    // Immediately update this hook instance
+    setItems(next);
   }, []);
 
   const remove = useCallback((id: string) => {
-    write(read().filter((i) => i.id !== id));
+    const productId = String(id);
+
+    const next = readCart().filter(
+      (item) => String(item.id) !== productId
+    );
+
+    saveCart(next);
+    setItems(next);
   }, []);
 
   const setQty = useCallback((id: string, qty: number) => {
+    const productId = String(id);
+
     if (qty <= 0) {
-      write(read().filter((i) => i.id !== id));
-    } else {
-      write(read().map((i) => (i.id === id ? { ...i, qty } : i)));
+      const next = readCart().filter(
+        (item) => String(item.id) !== productId
+      );
+
+      saveCart(next);
+      setItems(next);
+      return;
     }
+
+    const next = readCart().map((item) =>
+      String(item.id) === productId
+        ? {
+            ...item,
+            qty: Math.floor(qty),
+          }
+        : item
+    );
+
+    saveCart(next);
+    setItems(next);
   }, []);
 
-  const clear = useCallback(() => write([]), []);
+  const clear = useCallback(() => {
+    saveCart([]);
+    setItems([]);
+  }, []);
 
-  const count = items.reduce((s, i) => s + i.qty, 0);
+  const count = items.reduce(
+    (total, item) => total + item.qty,
+    0
+  );
 
-  return { items, add, remove, setQty, clear, count };
+  return {
+    items,
+    add,
+    remove,
+    setQty,
+    clear,
+    count,
+  };
 }
