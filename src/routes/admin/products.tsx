@@ -4,15 +4,24 @@ import { supabase, Product } from "@/lib/supabase";
 
 export interface DatabaseVariant {
   id?: string;
+
+  // IMPORTANT:
+  // This is products.uuid_id, NOT products.id
   product_id?: string;
+
   id_number: string;
   cas_number: string | null;
   specification: string;
+
   price: number;
-  quantity: number | null;
-  stock: number | null;
+  quantity: number;
+  stock: number;
+
   img: string | null;
+
   created_at?: string;
+
+  // Frontend-only fields
   imageFile?: File | null;
   imagePreview?: string;
 }
@@ -210,106 +219,329 @@ function AdminProducts() {
     setVariants(updated);
   };
 
-  const handleCreateOrUpdateProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return alert("Please enter a product name.");
-    if (!price || Number(price) <= 0) return alert("Please enter a valid price.");
 
-    try {
-      setUploadingImage(true);
-      const productId = editingProduct ? editingProduct.id : generateProductId(name);
+const handleCreateOrUpdateProduct = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-      let mainImageUrl = editingProduct?.img || "";
-      if (imageFile) {
-        mainImageUrl = await uploadImageToStorage(imageFile, `product-${productId}`);
+  if (!name.trim()) {
+    alert("Please enter a product name.");
+    return;
+  }
+
+  const numericPrice = Number(price);
+
+  if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  try {
+    setUploadingImage(true);
+
+    /*
+     * IMPORTANT DATABASE STRUCTURE
+     *
+     * products.id       = TEXT primary key
+     * products.uuid_id  = UUID
+     * product_variations.product_id = UUID
+     *
+     * Therefore:
+     *
+     * product_variations.product_id MUST receive products.uuid_id
+     * NOT products.id
+     */
+
+    // ---------------------------------------------------------
+    // 1. Generate / preserve the TEXT product ID
+    // ---------------------------------------------------------
+
+    const productId = editingProduct
+      ? editingProduct.id
+      : generateProductId(name);
+
+    // ---------------------------------------------------------
+    // 2. Generate / preserve UUID
+    // ---------------------------------------------------------
+
+    const productUuid =
+      editingProduct?.uuid_id || crypto.randomUUID();
+
+    // ---------------------------------------------------------
+    // 3. Upload main product image if changed
+    // ---------------------------------------------------------
+
+    let mainImageUrl = editingProduct?.img || "";
+
+    if (imageFile) {
+      mainImageUrl = await uploadImageToStorage(
+        imageFile,
+        `product-${productId}`
+      );
+    }
+
+    // ---------------------------------------------------------
+    // 4. Prepare product payload
+    // ---------------------------------------------------------
+
+    const productPayload = {
+      id: productId,
+      uuid_id: productUuid,
+
+      name: name.trim(),
+      tag: tag.trim() || null,
+
+      price: numericPrice,
+
+      img: mainImageUrl || null,
+
+      accent,
+      category,
+
+      summary: summary.trim() || null,
+      description: description.trim() || null,
+
+      slug: generateProductId(name),
+
+      // Keep these fields safe if they are not being managed
+      // through the form.
+      specs: editingProduct?.specs ?? null,
+      stack: editingProduct?.stack ?? null,
+      stock: editingProduct?.stock ?? 0,
+      variants: editingProduct?.variants ?? null,
+    };
+
+    // ---------------------------------------------------------
+    // 5. INSERT or UPDATE product
+    // ---------------------------------------------------------
+
+    if (editingProduct) {
+      const { error: productError } = await supabase
+        .from("products")
+        .update({
+          name: productPayload.name,
+          tag: productPayload.tag,
+          price: productPayload.price,
+          img: productPayload.img,
+          accent: productPayload.accent,
+          category: productPayload.category,
+          summary: productPayload.summary,
+          description: productPayload.description,
+          slug: productPayload.slug,
+        })
+        .eq("id", editingProduct.id);
+
+      if (productError) {
+        throw productError;
+      }
+    } else {
+      const { error: productError } = await supabase
+        .from("products")
+        .insert([productPayload]);
+
+      if (productError) {
+        throw productError;
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 6. Make sure we have the correct UUID from products
+    // ---------------------------------------------------------
+
+    const { data: savedProduct, error: savedProductError } =
+      await supabase
+        .from("products")
+        .select("id, uuid_id")
+        .eq("id", productId)
+        .single();
+
+    if (savedProductError) {
+      throw savedProductError;
+    }
+
+    if (!savedProduct?.uuid_id) {
+      throw new Error(
+        "Product was saved, but products.uuid_id could not be found."
+      );
+    }
+
+    const variationProductUuid = savedProduct.uuid_id;
+
+    // ---------------------------------------------------------
+    // 7. Determine which existing variations remain
+    // ---------------------------------------------------------
+
+    const existingVariationIds = (editingProduct?.product_variations || [])
+      .map((v) => v.id)
+      .filter(Boolean) as string[];
+
+    const submittedExistingVariationIds = variants
+      .map((v) => v.id)
+      .filter(Boolean) as string[];
+
+    // ---------------------------------------------------------
+    // 8. Delete variations removed from the edit form
+    // ---------------------------------------------------------
+
+    const variationIdsToDelete = existingVariationIds.filter(
+      (existingId) =>
+        !submittedExistingVariationIds.includes(existingId)
+    );
+
+    if (variationIdsToDelete.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("product_variations")
+        .delete()
+        .in("id", variationIdsToDelete);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 9. INSERT / UPDATE variations
+    // ---------------------------------------------------------
+
+    for (let index = 0; index < variants.length; index++) {
+      const v = variants[index];
+
+      // Ignore completely empty rows
+      if (!v.specification?.trim()) {
+        continue;
       }
 
-      const productPayload = {
-        id: productId,
-        name: name.trim(),
-        tag: tag.trim(),
-        price: parseFloat(price),
-        img: mainImageUrl,
-        accent,
-        category,
-        summary: summary.trim(),
-        description: description.trim(),
+      // -------------------------------------------------------
+      // Upload variation image if a new file was selected
+      // -------------------------------------------------------
+
+      let finalVariantImgUrl = v.img || null;
+
+      if (v.imageFile) {
+        finalVariantImgUrl = await uploadImageToStorage(
+          v.imageFile,
+          `variant-${productId}-${index}`
+        );
+      }
+
+      // -------------------------------------------------------
+      // Prepare variation payload
+      // -------------------------------------------------------
+
+      const variationPayload = {
+        /*
+         * THIS IS THE IMPORTANT FIX
+         *
+         * product_variations.product_id is UUID
+         * so we use products.uuid_id here.
+         */
+        product_id: variationProductUuid,
+
+        id_number:
+          v.id_number?.trim() ||
+          `SKU-${productId}-${Date.now()}-${index}`,
+
+        cas_number:
+          v.cas_number?.trim() || null,
+
+        specification: v.specification.trim(),
+
+        price: Number(v.price) || 0,
+
+        quantity: Number(v.quantity) || 0,
+
+        stock: Number(v.stock) || 0,
+
+        img: finalVariantImgUrl,
       };
 
-      const { error: productError } = editingProduct
-        ? await supabase.from("products").update(productPayload).eq("id", editingProduct.id)
-        : await supabase.from("products").insert([productPayload]);
+      // -------------------------------------------------------
+      // UPDATE existing variation
+      // -------------------------------------------------------
 
-      if (productError) throw productError;
+      if (v.id) {
+        const { error: updateVariationError } = await supabase
+          .from("product_variations")
+          .update(variationPayload)
+          .eq("id", v.id);
 
-      // Handle Variant Creation & Updating asynchronously
-      await Promise.all(
-        variants.map(async (v, index) => {
-          if (!v.specification?.trim()) return;
+        if (updateVariationError) {
+          throw updateVariationError;
+        }
+      }
 
-          let finalVariantImgUrl = v.img || null;
+      // -------------------------------------------------------
+      // INSERT new variation
+      // -------------------------------------------------------
 
-          if (v.imageFile) {
-            finalVariantImgUrl = await uploadImageToStorage(
-              v.imageFile,
-              `variant-${productId}-${index}`
-            );
-          }
+      else {
+        const { error: insertVariationError } = await supabase
+          .from("product_variations")
+          .insert([
+            variationPayload,
+          ]);
 
-          const variantPayload = {
-            product_id: productId,
-            id_number: v.id_number || `SKU-${productId}-${Date.now()}-${index}`,
-            cas_number: v.cas_number || null,
-            specification: v.specification.trim(),
-            price: Number(v.price) || 0,
-            quantity: Number(v.quantity) || 0,
-            stock: Number(v.stock) || 0,
-            img: finalVariantImgUrl,
-          };
-
-          if (v.id) {
-            const { error: updateVarError } = await supabase
-              .from("product_variations")
-              .update(variantPayload)
-              .eq("id", v.id);
-
-            if (updateVarError) throw updateVarError;
-          } else {
-            const { error: insertVarError } = await supabase
-              .from("product_variations")
-              .insert([variantPayload]);
-
-            if (insertVarError) throw insertVarError;
-          }
-        })
-      );
-
-      setIsModalOpen(false);
-      resetForm();
-      await fetchProducts();
-    } catch (error: any) {
-      alert(error?.message || "Failed to save product.");
-    } finally {
-      setUploadingImage(false);
+        if (insertVariationError) {
+          throw insertVariationError;
+        }
+      }
     }
-  };
 
-  const handleUpdateVariantInline = async (
-    variantId: string,
-    field: keyof DatabaseVariant,
-    value: any
-  ) => {
-    const { error } = await supabase
-      .from("product_variations")
-      .update({ [field]: value })
-      .eq("id", variantId);
+    // ---------------------------------------------------------
+    // 10. Refresh UI
+    // ---------------------------------------------------------
 
-    if (error) {
-      alert("Failed to update variant: " + error.message);
-    } else {
-      fetchProducts();
-    }
-  };
+    setIsModalOpen(false);
+
+    resetForm();
+
+    await fetchProducts();
+
+  } catch (error: any) {
+    console.error("Failed to save product:", error);
+
+    alert(
+      error?.message ||
+      error?.details ||
+      "Failed to save product."
+    );
+  } finally {
+    setUploadingImage(false);
+  }
+};
+
+
+
+const handleUpdateVariantInline = async (
+  variantId: string,
+  field: keyof DatabaseVariant,
+  value: any
+) => {
+  let updateValue = value;
+
+  if (field === "price") {
+    updateValue = Number(value);
+  }
+
+  if (field === "stock" || field === "quantity") {
+    updateValue = Number.parseInt(value, 10) || 0;
+  }
+
+  const { error } = await supabase
+    .from("product_variations")
+    .update({
+      [field]: updateValue,
+    })
+    .eq("id", variantId);
+
+  if (error) {
+    console.error("Variant update error:", error);
+    alert("Failed to update variant: " + error.message);
+    return;
+  }
+
+  await fetchProducts();
+};
+
 
   const handleDeleteVariantInline = async (variantId: string) => {
     if (!confirm("Delete this variant from database?")) return;
