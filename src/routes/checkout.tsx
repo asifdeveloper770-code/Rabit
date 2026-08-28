@@ -281,6 +281,29 @@ useEffect(() => {
           },
         }
       );
+      if (error) {
+  console.error("BTCPay Edge Function error:", error);
+  console.error("Error context:", error.context);
+
+  if (error.context) {
+    try {
+      const response = error.context.clone();
+      const responseText = await response.text();
+
+      console.error(
+        "BTCPay Edge Function response:",
+        responseText,
+      );
+    } catch (readError) {
+      console.error(
+        "Could not read Edge Function response:",
+        readError,
+      );
+    }
+  }
+
+  throw error;
+}
 
       if (error) throw new Error(error.message);
 

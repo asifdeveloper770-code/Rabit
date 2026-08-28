@@ -212,7 +212,7 @@ function OrderItemsDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
-          {["All", "Injectibles", "Oral", "Peptides"].map((cat) => (
+          {["All", "Injectables", "Oral", "Peptides"].map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}

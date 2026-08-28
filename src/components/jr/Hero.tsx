@@ -45,8 +45,8 @@ export function Hero() {
           <MagneticButton variant="blue" to="/shop?category=Peptides">
             Shop Peptides
           </MagneticButton>
-          <MagneticButton variant="black" to="/shop?category=Injectibles">
-            Shop Injectibles
+          <MagneticButton variant="black" to="/shop?category=Injectables">
+            Shop Injectables
           </MagneticButton>
           <MagneticButton variant="ghost" to="/shop?category=Oral">
             Shop Orals

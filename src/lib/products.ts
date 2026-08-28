@@ -9,7 +9,7 @@ export type Product = {
   price: number;
   img: string;
   accent: "blue" | "green";
-  category: "Injectibles" | "Oral" | "Peptides";
+  category: "Injectables" | "Oral" | "Peptides";
   summary: string;
   description: string;
   specs: { label: string; value: string }[];
@@ -24,7 +24,7 @@ export const PRODUCTS: Product[] = [
     price: 89,
     img: p1,
     accent: "blue",
-    category: "Injectibles",
+    category: "Injectables",
     summary: "Body Protection Compound — the gold standard for connective tissue repair.",
     description:
       "A 15-amino-acid pentadecapeptide derived from a gastric protein. Rapidly accelerates tendon, ligament, and gut lining repair. Angiogenic, cytoprotective, and remarkably stable.",
@@ -43,7 +43,7 @@ export const PRODUCTS: Product[] = [
     price: 129,
     img: p2,
     accent: "green",
-    category: "Injectibles",
+    category: "Injectables",
     summary: "Systemic actin regulator — flexibility, wound healing, and cardiac support.",
     description:
       "A synthetic fragment of Thymosin Beta-4. Upregulates actin, drives cell migration, and modulates inflammation. Ideal for chronic injuries and full-body recomp phases.",
@@ -62,7 +62,7 @@ export const PRODUCTS: Product[] = [
     price: 179,
     img: p3,
     accent: "blue",
-    category: "Injectibles",
+    category: "Injectables",
     summary: "Long-arg-3 IGF-1 — hypertrophy driver with prolonged serum activity.",
     description:
       "Extended half-life analog of IGF-1. Drives satellite cell proliferation, protein synthesis, and hyperplasia. Reserved for advanced protocols.",
@@ -138,7 +138,7 @@ export const PRODUCTS: Product[] = [
     price: 99,
     img: p1,
     accent: "blue",
-    category: "Injectibles",
+    category: "Injectables",
     summary: "Selective GH secretagogue — clean pulse, no cortisol spike.",
     description:
       "A pentapeptide ghrelin mimetic. Triggers clean, selective growth hormone release without prolactin or cortisol elevation. The 'sleep stack' favorite.",
@@ -214,7 +214,7 @@ export const PRODUCTS: Product[] = [
     price: 94,
     img: p2,
     accent: "blue",
-    category: "Injectibles",
+    category: "Injectables",
     summary: "Neuropeptide — focus, BDNF upregulation, neuroprotection.",
     description:
       "A synthetic ACTH fragment. Upregulates BDNF, enhances cognition, and protects against oxidative CNS stress. The mental edge under load.",
@@ -247,7 +247,7 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const CATEGORIES = ["All", "Injectibles", "Oral", "Peptides"] as const;
+export const CATEGORIES = ["All", "Injectables", "Oral", "Peptides"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export function getProduct(id: string) {

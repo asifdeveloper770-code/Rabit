@@ -38,7 +38,7 @@ function AdminProducts() {
   const [imagePreview, setImagePreview] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [accent, setAccent] = useState<"blue" | "green">("blue");
-  const [category, setCategory] = useState<"Injectibles" | "Oral" | "Peptides">("Peptides");
+  const [category, setCategory] = useState<"Injectables" | "Oral" | "Peptides">("Peptides");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
 
@@ -341,7 +341,7 @@ function AdminProducts() {
     setImagePreview(product.img || "");
     setImageFile(null);
     setAccent((product.accent as "blue" | "green") || "blue");
-    setCategory((product.category as "Injectibles" | "Oral" | "Peptides") || "Peptides");
+    setCategory((product.category as "Injectables" | "Oral" | "Peptides") || "Peptides");
     setSummary(product.summary || "");
     setDescription(product.description || "");
 
@@ -579,7 +579,7 @@ function AdminProducts() {
             >
               <option value="ALL">All Categories</option>
               <option value="Peptides">Peptides</option>
-              <option value="Injectibles">Injectibles</option>
+              <option value="Injectables">Injectables</option>
               <option value="Oral">Oral</option>
             </select>
             <select

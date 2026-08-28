@@ -32,6 +32,7 @@ type CheckoutRequest = {
 
 type Product = {
   id: string;
+  uuid_id: string | null;
   name: string;
   price: number | string;
   stock: number | null;
@@ -264,10 +265,9 @@ Deno.serve(async (req) => {
 
       const quantity = toPositiveInteger(item.quantity);
 
-      const variationId =
-        item.variation_id
-          ? cleanString(item.variation_id)
-          : null;
+      const variationId = item.variation_id
+        ? cleanString(item.variation_id)
+        : null;
 
       if (!productId) {
         return jsonResponse(
@@ -293,7 +293,6 @@ Deno.serve(async (req) => {
         variation_id: variationId,
       });
     }
-
     // ============================================================
     // LOAD PRODUCTS FROM DATABASE
     // ============================================================
@@ -312,7 +311,7 @@ Deno.serve(async (req) => {
     } = await supabaseAdmin
       .from("products")
       .select(
-        "id, name, price, stock",
+        "id, uuid_id, name, price, stock",
       )
       .in("id", productIds);
 
@@ -440,24 +439,34 @@ Deno.serve(async (req) => {
       // ----------------------------------------------------------
 
       if (item.variation_id) {
-        const variation =
-          variationMap.get(
-            item.variation_id,
-          );
+        const variation = variationMap.get(
+          item.variation_id,
+        );
 
         if (!variation) {
           return jsonResponse(
             {
-              error:
-                `Variation ${item.variation_id} was not found.`,
+              error: `Variation ${item.variation_id} was not found.`,
             },
             400,
           );
         }
 
+        // The variation points to products.uuid_id,
+        // not products.id.
+       if (!product.uuid_id) {
+      return jsonResponse(
+        {
+          error:
+            `Product ${product.id} is missing its UUID.`,
+        },
+        500,
+      );
+    }
+
         if (
           variation.product_id !==
-          product.id
+          product.uuid_id
         ) {
           return jsonResponse(
             {
@@ -468,8 +477,7 @@ Deno.serve(async (req) => {
           );
         }
 
-        unitPrice =
-          Number(variation.price);
+        unitPrice = Number(variation.price);
 
         availableStock =
           variation.stock ??
@@ -548,8 +556,9 @@ Deno.serve(async (req) => {
     // ============================================================
 
     const shipping =
-      subtotal >= 75 ? 0 : 7;
+      subtotal > 150 ? 0 : subtotal > 0 ? 12 : 0;
 
+    const tax = toMoney(subtotal * 0.07);
     // ============================================================
     // TAX
     //
@@ -559,7 +568,6 @@ Deno.serve(async (req) => {
     // We can add the exact tax calculation once confirmed.
     // ============================================================
 
-    const tax = 0;
 
     // ============================================================
     // TOTAL
@@ -568,8 +576,8 @@ Deno.serve(async (req) => {
     const total =
       toMoney(
         subtotal +
-          shipping +
-          tax,
+        shipping +
+        tax,
       );
 
     if (total <= 0) {
@@ -743,7 +751,7 @@ Deno.serve(async (req) => {
 
             checkout: {
               redirectURL:
-                `${siteUrl}/payment/success?order_id=${encodeURIComponent(
+                `${siteUrl}/order-confirmation?orderId=${encodeURIComponent(
                   orderId,
                 )}`,
 

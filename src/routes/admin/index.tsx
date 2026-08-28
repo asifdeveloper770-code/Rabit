@@ -22,7 +22,7 @@ function AdminOverview() {
   }, []);
 
   const totalRevenue = products.reduce((acc, p) => acc + p.price * (p.stock || 10), 0);
-  const totalInjectibles = products.filter((p) => p.category === "Injectibles").length;
+  const totalInjectables = products.filter((p) => p.category === "Injectables").length;
   const totalPeptides = products.filter((p) => p.category === "Peptides").length;
 
   return (
@@ -67,10 +67,10 @@ function AdminOverview() {
 
         <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
           <div className="font-sans text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Injectibles Listed
+            Injectables Listed
           </div>
           <div className="mt-2 font-sans text-3xl font-black tracking-tight text-slate-900">
-            {totalInjectibles}
+            {totalInjectables}
           </div>
         </div>
       </div>
